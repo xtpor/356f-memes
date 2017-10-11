@@ -123,7 +123,6 @@ export default {
             upperText: "",
             lowerText: "",
             image: null,
-            uploading: false
         }
     },
     watch: {
@@ -152,7 +151,7 @@ export default {
             renderMemesText(canvas, this.upperText.toUpperCase(),
                             this.lowerText.toUpperCase(), schemes, config)
         },
-        done() {
+        done: _.once(function () {
             let dataURL = this.canvas.toDataURL()
             window.storage.finalImageData = dataURL
 
@@ -164,15 +163,13 @@ export default {
                         let loc = window.location
                         let url = `${loc.protocol}//${loc.host}/archive/${resp.ok}`
                         window.storage.finalImageURL = url
-
-                        // prefetch the image
                         this.$emit('done')
                     } else {
                         // this shouldn't happen, log the error
                         console.log(error)
                     }
                 })
-        }
+        })
     },
     mounted() {
         let image = this.image = new Image()

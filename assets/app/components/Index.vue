@@ -7,7 +7,6 @@
 
 <script>
 import _ from 'lodash'
-import Cropper from 'cropperjs'
 
 import Layout from './Layout'
 import Navigation from './Navigation'

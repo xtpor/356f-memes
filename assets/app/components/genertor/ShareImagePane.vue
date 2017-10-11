@@ -11,6 +11,10 @@
                     <div class="url">
                         <div class="button url-tag">URL</div>
                         <input type="text" id="url-text" :value="url" readonly>
+                        <div class="button button-outline copy-button" @click="copyURL">
+                            <div class="tooltip">Copy</div>
+                            <i class="fa fa-files-o fa-2x" aria-hidden="true"></i>
+                        </div>
                     </div>
                 </div>
                 <div>
@@ -38,6 +42,13 @@ export default {
         let image = new Image()
         image.src = window.storage.finalImageData
         image.onload = () => ctx.drawImage(image, 0, 0)
+    },
+    methods: {
+        copyURL() {
+            let urlText = document.getElementById('url-text')
+            urlText.select()
+            let succeeded = document.execCommand('copy')
+        }
     }
 }
 </script>
@@ -86,8 +97,42 @@ export default {
 
                 #url-text {
                     padding-left: 5.5rem;
+                    padding-right: 3.6rem;
                     width: 50rem;
                 }
+
+                .copy-button {
+                    position: relative;
+                    margin-left: -3.4rem;
+                    margin-bottom: 0;
+                    padding-top: 0.3rem;
+                    padding-left: 0.3rem;
+                    padding-right: 0.3rem;
+                    padding-bottom: 0.1rem;
+                    height: 2.7rem;
+                    line-height: 2.7rem;
+                    vertical-align: middle;
+
+                    .tooltip {
+                        display: none;
+                    }
+                }
+
+                .copy-button:hover {
+                    .tooltip {
+                        display: block;
+                        border: 1px solid black;
+                        background-color: black;
+                        color: white;
+                        border-radius: 0.3rem;
+                        position: absolute;
+                        left: -1rem;
+                        right: -1rem;
+                        top: -3rem;
+                        bottom: 3rem;
+                    }
+                }
+
             }
         }
     }

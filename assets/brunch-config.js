@@ -11,16 +11,16 @@ module.exports = {
   files: {
     javascripts: {
       joinTo: {
-        'vendor.js': /^(?!app)/,
-        'app.js': /^app/
+        'js/vendor.js': /^(?!app)/,
+        'js/app.js': /^app/
       }
     },
     templates: {
-      joinTo: 'app.js'
+      joinTo: 'js/app.js'
     },
     stylesheets: {
       joinTo: {
-        'vendor.css': /^node_modules/
+        'css/vendor.css': /^node_modules/
       }
     }
   },
@@ -34,6 +34,10 @@ module.exports = {
   plugins: {
     babel: {
       presets: ['es2015']
+    },
+    copycat: {
+      fonts: ["node_modules/font-awesome/fonts"],
+      verbose: false
     }
   },
 

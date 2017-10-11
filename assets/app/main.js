@@ -8,10 +8,10 @@ Unless a npm module was already imported in a js file, importing the
 npm module from .vue files will not work, see
 https://github.com/theocodes/vue-brunch/issues/6 for more details.
 */
-import _ from 'lodash'
+import lodash from 'lodash'
 import axios from 'axios'
+import cropperjs from 'cropperjs'
 import rpc from './rpc'
-import Cropper from 'cropperjs'
 
 Vue.config.productionTip = false
 
