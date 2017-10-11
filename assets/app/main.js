@@ -10,8 +10,12 @@ https://github.com/theocodes/vue-brunch/issues/6 for more details.
 */
 import _ from 'lodash'
 import axios from 'axios'
+import rpc from './rpc'
+import Cropper from 'cropperjs'
 
 Vue.config.productionTip = false
+
+window.storage = {}
 
 /* eslint-disable no-new */
 new Vue({

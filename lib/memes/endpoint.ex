@@ -7,6 +7,17 @@ defmodule Memes.Endpoint do
   plug :match
   plug :dispatch
 
+  get "/archive/:hash" do
+    case Memes.ValueStore.get(hash) do
+      {:ok, data} ->
+        conn
+        |> put_resp_header("content-type", "image/png")
+        |> send_resp(200, data)
+      :error ->
+        send_file(conn, 200, page_path())
+    end
+  end
+
   post "/rpc" do
     rpc_handler = JsonRpc.method_mapper(Memes.RpcEndpoint)
     {:ok, text, conn} = read_body(conn)
@@ -22,9 +33,11 @@ defmodule Memes.Endpoint do
   end
 
   match _ do
-    file_path =
-      Path.join([Application.app_dir(:memes), 'priv', 'static', 'index.html'])
-    send_file(conn, 200, file_path)
+    send_file(conn, 200, page_path())
+  end
+
+  defp page_path do
+    Path.join([Application.app_dir(:memes), 'priv', 'static', 'index.html'])
   end
 
 end

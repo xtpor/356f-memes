@@ -1,20 +1,20 @@
 <template lang="html">
     <div class="upload-methods">
-        <div class="item-frame" @click="$emit('click', 'album-uploader')">
+        <div class="item-frame" @click="$emit('jump', 'album-uploader')">
             <div class="item-icon icon-album"></div>
             <div class="item-title">Album</div>
             <div class="item-desc">
                 Choose from our image album
             </div>
         </div>
-        <div class="item-frame" @click="$emit('click', 'file-uploader')">
+        <div class="item-frame" @click="$emit('jump', 'file-uploader')">
             <div class="item-icon icon-upload"></div>
             <div class="item-title">Upload</div>
             <div class="item-desc">
                 Upload and use your own image
             </div>
         </div>
-        <div class="item-frame" @click="$emit('click', 'url-uploader')">
+        <div class="item-frame" @click="$emit('jump', 'url-uploader')">
             <div class="item-icon icon-internet"></div>
             <div class="item-title">URL</div>
             <div class="item-desc">

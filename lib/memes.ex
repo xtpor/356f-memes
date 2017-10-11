@@ -7,7 +7,8 @@ defmodule Memes do
     opts = [ip: {0, 0, 0, 0}, port: 8080]
 
     children = [
-      Plug.Adapters.Cowboy.child_spec(:http, Memes.Endpoint, [], opts)
+      Plug.Adapters.Cowboy.child_spec(:http, Memes.Endpoint, [], opts),
+      worker(Memes.ValueStore, [])
     ]
 
     opts = [strategy: :one_for_one, name: Memes.Supervisor]

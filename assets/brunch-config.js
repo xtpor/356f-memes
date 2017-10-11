@@ -2,7 +2,9 @@ module.exports = {
   npm: {
     styles: {
       'normalize.css': ['normalize.css'],
-      milligram: ['dist/milligram.css']
+      milligram: ['dist/milligram.css'],
+      cropperjs: ['dist/cropper.css'],
+      'font-awesome': ['css/font-awesome.css'],
     }
   },
 
@@ -22,6 +24,8 @@ module.exports = {
       }
     }
   },
+
+  notifications: false,
 
   conventions: {
     assets: /^app\/static/

@@ -1,13 +1,7 @@
 <template lang="html">
     <div class="url-uploader-pane">
-        <div class="subheader">
-            <button class="button button-outline">back</button>
-            <span class="trail">
-                Generator
-                <span class="seperator"> > </span>
-                URL Uploader
-            </span>
-        </div>
+        <trail :items="['Generator', 'URL Uploader']"
+            class="trail"  @back="$emit('back')"/>
         <div class="main" spellcheck="false">
             <input class="search-bar" type="url" v-model:text="url"
                 placeholder="Type the URL of the image here">
@@ -18,49 +12,47 @@
 
 <script>
 import _ from 'lodash'
-import axios from 'axios'
+import rpc from '../../rpc'
+
+import Trail from '../widgets/Trail'
 
 const urlPattern = /(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/
 
 export default {
+    components: { Trail },
     data() {
         return { url: "", status: "", statusClass: "normal" }
     },
     watch: {
         url() {
-            this.status = 'typing ...'
-            if (this.url !== '') {
-                this.fetchImage()
-            }
+            this.status = 'Waiting for you to finish typing ...'
+            this.fetchImage()
         }
     },
     methods: {
         fetchImage: _.debounce(function () {
-            if (!this.url.startsWith("http")) {
-                this.url = "http://" + this.url
-            }
+            let url = this.url;
 
-            if (urlPattern.test(this.url)) {
-                this.status = 'fetching ...'
+            if (url === '') return
+            if (!url.startsWith("http")) url = "http://" + url
+
+            if (urlPattern.test(url)) {
+                this.status = 'Fetching the image from the internet ...'
                 this.statusClass = 'normal'
 
-                axios.get(this.url)
-                    .then((response) => {
-                        this.status = this.url + " oh!"
-                        this.statusClass = 'normal'
-                    })
+                rpc.call('/rpc', 'fetch', url)
                     .catch((error) => {
+                        this.status = error.message
                         this.statusClass = 'error'
-                        if (error.response) {
-                            this.status = 'oh my god'
-                            console.log(error.response.data);
-                            console.log(error.response.status);
-                            console.log(error.response.headers);
-                        } else if (error.request) {
-                            console.log(error.request);
-                            this.status = 'Invalid address'
+                    })
+                    .then((resp) => {
+                        this.statusClass = 'normal'
+                        if (resp.error) {
+                            this.status = resp.error
                         } else {
-                            this.status = 'Unexpected error :('
+                            this.status = "done!"
+                            window.storage.rawImageData = resp.data
+                            this.$emit('done')
                         }
                     });
                 } else {
@@ -82,17 +74,8 @@ export default {
     max-width: 112.0rem;
     margin: 0 auto;
 
-    .subheader {
+    .trail {
         padding-top: 1rem;
-
-        .trail {
-            margin-left: 1rem;
-            font-size: 2.0rem;
-
-            .seperator {
-                font-size: 2.5rem;
-            }
-        }
     }
 
     .main {
