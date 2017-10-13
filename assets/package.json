@@ -4,7 +4,9 @@
   "version": "0.0.1",
   "scripts": {
     "start": "brunch watch --stdin",
-    "build": "brunch build --production"
+    "build-dev": "npm run clean && brunch build",
+    "build": "npm run clean && brunch build --production",
+    "clean": "rm -rf ../priv/static"
   },
   "author": {},
   "keywords": [],

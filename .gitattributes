@@ -1,0 +1,4 @@
+* text=auto
+
+# All shell scripts should use unix line ending (LF)
+*.sh text eol=lf

@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Stop if there is an error in any command below
+set -e
+
 cd /opt/memes
 
 if [ ! -d "deps" ]; then
