@@ -7,4 +7,6 @@ COPY startup.sh /startup.sh
 
 RUN chmod u+x /startup.sh && mv /startup.sh /startup
 
+WORKDIR "/opt/memes"
+
 ENV PATH="${PATH}:/opt/memes/assets/node_modules/brunch/bin"
