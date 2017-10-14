@@ -1,8 +1,9 @@
 
 defmodule Brunch do
 
-  @build_dev "npm run build-dev --prefix assets"
-  @build_prod "npm run build --prefix assets"
+  @build_dev "brunch build"
+  @build_prod "brunch build --production"
+  @clean "npm run clean"
 
   def poll(interval \\ 20000) do
     Brunch.Poller.start_link(interval)
@@ -25,46 +26,50 @@ defmodule Brunch do
   end
 
   def build(:dev) do
+    clean()
     Brunch.Task.run(@build_dev)
   end
 
   def build(:prod) do
+    clean()
     Brunch.Task.run(@build_prod)
+  end
+
+  def clean, do: Brunch.Task.run(@clean)
+
+  def cmd(text) do
+    require Logger
+
+    Logger.info("#{text}")
+    Port.open({:spawn, text}, [:binary, :stderr_to_stdout, {:cd, "assets"}])
   end
 
 end
 
 defmodule Brunch.Watcher do
-  require Logger
   use GenServer
+  require Logger
 
-  @restart_interval 10000
+  @watch_cmd "brunch watch --stdin"
 
-  def start_link do
-    GenServer.start_link(__MODULE__, [], name: __MODULE__)
+  def start_link(interval \\ 10000) do
+    GenServer.start_link(__MODULE__, interval, name: __MODULE__)
   end
 
-  def init(_) do
+  def init(interval) do
     Process.flag(:trap_exit, true)
-    {:ok, open_port()}
+    {:ok, {interval, Brunch.cmd(@watch_cmd)}}
   end
 
-  def handle_info({port, {:data, text}}, port) do
+  def handle_info({port, {:data, text}}, {interval, port}) do
     text |> String.trim |> IO.puts
-    {:noreply, port}
+    {:noreply, {interval, port}}
   end
 
-  def handle_info({:EXIT, port, _reason}, port) do
-    s = @restart_interval / 1000
-    Logger.info("brunch watcher crashed, restart in #{s} seconds")
-    Process.sleep(@restart_interval)
-    {:noreply, open_port()}
-  end
-
-  defp open_port do
-    cmd = "npm start --prefix assets"
-    Logger.info("#{__MODULE__}: #{cmd}")
-    Port.open({:spawn, cmd}, [:binary, :stderr_to_stdout])
+  def handle_info({:EXIT, port, _reason}, {interval, port}) do
+    Logger.info("brunch watcher crashed, restart in #{interval / 1000} seconds")
+    Process.sleep(interval)
+    {:noreply, {interval, Brunch.cmd(@watch_cmd)}}
   end
 
 end
@@ -100,8 +105,7 @@ defmodule Brunch.Task do
 
   def init(cmd) do
     Process.flag(:trap_exit, true)
-    Logger.info("#{cmd}")
-    {:ok, Port.open({:spawn, cmd}, [:binary, :stderr_to_stdout])}
+    {:ok, Brunch.cmd(cmd)}
   end
 
   def handle_info({port, {:data, text}}, port) do

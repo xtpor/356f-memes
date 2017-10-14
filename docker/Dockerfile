@@ -6,3 +6,5 @@ RUN apk add --update nodejs nodejs-npm
 COPY startup.sh /startup.sh
 
 RUN chmod u+x /startup.sh && mv /startup.sh /startup
+
+ENV PATH="${PATH}:/opt/memes/assets/node_modules/brunch/bin"
