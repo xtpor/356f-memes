@@ -1,0 +1,110 @@
+#!/bin/bash
+# run.sh
+# A wrapper script for interacting with the docker container
+
+# The directory that the script currently is in
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# The docker image is versioned by a file locate at "./docker/version"
+VSN=`cat $DIR/docker/version`
+
+# Container name
+NAME='memes'
+
+# Data volume name
+VOL='memes-data'
+
+# Ensure the docker image is up-to-date by checking the version file
+function ensure_image_exist {
+    if ! docker image inspect memes:$VSN >/dev/null 2>&1; then
+        echo "Error: The docker image memes:$VSN not found on your machine"
+        echo "run the command \"./memes build-image\" to create one"
+        exit -1
+    fi
+}
+
+case "$1" in
+    # Run the application in production mode
+    start)
+        # Build the development environment image
+        cd $DIR/docker
+        docker build -t $NAME:$VSN .
+
+        # Create the data volume
+        docker volume rm $VOL
+        docker volume create $VOL
+
+        # Stop existing container (if any)
+        docker stop $NAME
+
+        # Run the container in detached mode
+        docker create --rm -it \
+            --name $NAME \
+            -p 8080:8080 \
+            -v $VOL:/opt/memes \
+            memes:$VSN \
+            /startup
+
+        # Copy the project's file into the container
+        cd $DIR
+        docker cp . $NAME:/opt/memes
+
+        docker start $NAME
+        ;;
+    shell)
+        if docker inspect -f {{.State.Running}} $NAME >/dev/null 2>&1; then
+            echo "Starting a new shell in a active container"
+            echo "Note: This shell will exit when the container terminates"
+            docker exec -it memes bash
+            exit 0
+        fi
+
+        ensure_image_exist
+        case "$2" in
+            volume)
+                # Open a shell (bash) inside the container
+                docker create --rm -it \
+                    --name $NAME \
+                    -p 8080:8080 \
+                    -v $VOL:/opt/memes \
+                    $NAME:$VSN \
+                    /bin/bash \
+                    1>/dev/null
+
+                docker cp . $NAME:/opt/memes
+
+                docker start $NAME 1>/dev/null
+
+                echo "Starting development environment in data-volume mode"
+                echo "press ENTER to continue"
+                docker attach $NAME
+                ;;
+            *)
+                echo "Starting development environment in host-directory mode"
+                docker run --rm -it \
+                    --name $NAME \
+                    -p 8080:8080 \
+                    -v $DIR:/opt/memes \
+                    $NAME:$VSN \
+                    /bin/bash
+                ;;
+        esac
+        ;;
+    build-image)
+        # Build an up-to-date image
+        cd $DIR/docker
+        docker build -t $NAME:$VSN .
+        ;;
+    sync-volume)
+        # Copy file from host to the container
+        docker cp . $NAME:/opt/memes
+        ;;
+    clear-volume)
+        # Remove the data-volume
+        docker volume rm $VOL
+        ;;
+    *)
+        echo "Usage: ./memes <command>"
+        echo "command: start | shell | shell volume | build-image"
+        ;;
+esac
