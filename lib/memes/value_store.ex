@@ -6,7 +6,10 @@ defmodule Memes.ValueStore do
   @spec put(binary()) :: binary()
   def put(data) when is_binary(data) do
     sha1 = sha1_hash(data)
-    Memes.Repo.insert_all(@table, [[hash: sha1, value: data]])
+    case exist?(sha1) do
+      true -> nil
+      false -> Memes.Repo.insert_all(@table, [[hash: sha1, value: data]])
+    end
     sha1
   end
 
@@ -20,6 +23,18 @@ defmodule Memes.ValueStore do
     case Memes.Repo.all(q) do
       [data] -> {:ok, data}
       [] -> :error
+    end
+  end
+
+  defp exist?(hash) do
+    q =
+      from g in @table,
+      where: g.hash == ^hash,
+      select: g.hash
+
+    case Memes.Repo.all(q) do
+      [^hash] -> true
+      [] -> false
     end
   end
 
