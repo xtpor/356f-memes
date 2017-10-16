@@ -8,7 +8,7 @@ defmodule Memes do
 
     children = [
       Plug.Adapters.Cowboy.child_spec(:http, Memes.Endpoint, [], opts),
-      worker(Memes.ValueStore, [])
+      supervisor(Memes.Repo, [])
     ]
 
     opts = [strategy: :one_for_one, name: Memes.Supervisor]
