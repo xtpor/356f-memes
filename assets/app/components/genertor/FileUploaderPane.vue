@@ -1,27 +1,26 @@
 <template lang="html">
-    <div class="file-uploader-pane">
+    <layout class="file-uploader-pane">
         <trail :items="['Generator', 'File Uploader']"
-            class="trail"  @back="$emit('back')"/>
+            slot="trail" @back="$emit('back')"/>
 
-        <div class="main">
-            <input id="upload" type="file" multiple="false"
-                    @change="chosenFile($event)"
-                    accept="image/*" style="display: none"/>
-            <div class="uploader"
-                    @dragenter.stop.prevent
-                    @dragover.stop.prevent
-                    @drop.stop.prevent="dropFile($event)">
-                <span class="drag-n-drop-text">Drop Image Here</span>
-                <span class="upload-text" @click="promptFile">Choose File</span>
-            </div>
+        <input id="upload" type="file" multiple="false"
+                @change="chosenFile($event)"
+                accept="image/*" style="display: none"/>
+        <div class="uploader"
+                @dragenter.stop.prevent
+                @dragover.stop.prevent
+                @drop.stop.prevent="dropFile($event)">
+            <span class="drag-n-drop-text">Drop Image Here</span>
+            <span class="upload-text" @click="promptFile">Choose File</span>
         </div>
-    </div>
+    </layout>
 </template>
 
 <script>
 import _ from 'lodash'
 import rpc from '../../rpc'
 
+import Layout from './Layout'
 import Trail from '../widgets/Trail'
 
 const supportedTypes = [
@@ -32,7 +31,7 @@ const supportedTypes = [
 ]
 
 export default {
-    components: { Trail },
+    components: { Trail, Layout },
     methods: {
         promptFile() {
             let upload = document.getElementById('upload')
@@ -66,44 +65,27 @@ export default {
 <style lang="less" scoped>
 @import "../../css/_flex_helper.less";
 
-.file-uploader-pane {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    max-width: 112.0rem;
-    margin: 0 auto;
+.uploader {
+    .flex-center;
 
-    .trail {
-        margin-top: 1rem;
+    border: 1px solid black;
+    border-radius: 0.7rem;
+    width: 30rem;
+    height: 30rem;
+
+    .drag-n-drop-text {
+        font-size: 2.5rem;
     }
 
-    .main {
-        flex-grow: 1;
-        .flex-center;
+    .upload-text {
+        font-size: 3rem;
+        text-decoration: underline;
+    }
 
-        .uploader {
-            .flex-center;
-
-            border: 1px solid black;
-            border-radius: 0.7rem;
-            width: 30rem;
-            height: 30rem;
-
-            .drag-n-drop-text {
-                font-size: 2.5rem;
-            }
-
-            .upload-text {
-                font-size: 3rem;
-                text-decoration: underline;
-            }
-
-            .upload-text:hover {
-                font-size: 3rem;
-                text-decoration: none;
-                cursor: pointer;
-            }
-        }
+    .upload-text:hover {
+        font-size: 3rem;
+        text-decoration: none;
+        cursor: pointer;
     }
 }
 </style>
