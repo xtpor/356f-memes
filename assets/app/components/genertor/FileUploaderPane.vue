@@ -63,12 +63,13 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "../../css/_palatte.less";
 @import "../../css/_flex_helper.less";
 
 .uploader {
     .flex-center;
 
-    border: 1px solid black;
+    border: 1px solid @palatte-primary;
     border-radius: 0.7rem;
     width: 30rem;
     height: 30rem;
