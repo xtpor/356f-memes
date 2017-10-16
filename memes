@@ -41,7 +41,7 @@ case "$1" in
         docker create --rm -it \
             --name $NAME \
             -p 8080:8080 \
-            -v $VOL:/opt/memes \
+            -v $VOL:/opt \
             memes:$VSN \
             /startup
 
@@ -66,7 +66,7 @@ case "$1" in
                 docker create --rm -it \
                     --name $NAME \
                     -p 8080:8080 \
-                    -v $VOL:/opt/memes \
+                    -v $VOL:/opt \
                     $NAME:$VSN \
                     /bin/bash \
                     1>/dev/null
