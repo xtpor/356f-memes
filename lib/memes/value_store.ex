@@ -1,26 +1,26 @@
-
 defmodule Memes.ValueStore do
-  use GenServer
+  import Ecto.Query, only: [from: 2]
 
-  def start_link do
-    GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
+  @table "images"
+
+  @spec put(binary()) :: binary()
+  def put(data) when is_binary(data) do
+    sha1 = sha1_hash(data)
+    Memes.Repo.insert_all(@table, [[hash: sha1, value: data]])
+    sha1
   end
 
-  def put(data) do
-    GenServer.call(__MODULE__, {:put, data})
-  end
+  @spec get(binary()) :: {:ok, binary()} | :error
+  def get(hash) when is_binary(hash) do
+    q =
+      from g in @table,
+      where: g.hash == ^hash,
+      select: g.value
 
-  def get(hash) do
-    GenServer.call(__MODULE__, {:get, hash})
-  end
-
-  def handle_call({:get, hash}, _from, store) do
-    {:reply, Map.fetch(store, hash), store}
-  end
-
-  def handle_call({:put, data}, _from, store) do
-    key = sha1_hash(data)
-    {:reply, key, Map.put(store, key, data)}
+    case Memes.Repo.all(q) do
+      [data] -> {:ok, data}
+      [] -> :error
+    end
   end
 
   defp sha1_hash(data) do

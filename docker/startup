@@ -19,4 +19,6 @@ if [ ! -d "priv/static" ]; then
 fi
 
 mix local.rebar --force
+mix ecto.create
+mix ecto.migrate
 iex -S mix

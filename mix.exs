@@ -25,7 +25,9 @@ defmodule Memes.Mixfile do
       {:plug, "~> 1.4"},
       {:cowboy, "~> 1.1"},
       {:poison, "~> 3.1"},
-      {:httpoison, "~> 0.13.0"}
+      {:httpoison, "~> 0.13.0"},
+      {:ecto, "~> 2.2"},
+      {:sqlite_ecto2, "~> 2.2"}
     ]
   end
 end

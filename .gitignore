@@ -52,3 +52,6 @@ Temporary Items
 
 # Node.js
 /assets/node_modules
+
+# Sqlite3 databases
+/priv/database

@@ -1,7 +1,7 @@
 
 FROM bitwalker/alpine-elixir:1.5
 
-RUN apk add --update nodejs nodejs-npm
+RUN apk add --update nodejs nodejs-npm build-base sqlite
 
 COPY startup /startup
 
