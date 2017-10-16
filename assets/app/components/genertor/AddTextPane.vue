@@ -123,6 +123,7 @@ export default {
             upperText: "",
             lowerText: "",
             image: null,
+            sent: false,
         }
     },
     watch: {
@@ -151,25 +152,29 @@ export default {
             renderMemesText(canvas, this.upperText.toUpperCase(),
                             this.lowerText.toUpperCase(), schemes, config)
         },
-        done: _.once(function () {
-            let dataURL = this.canvas.toDataURL()
-            window.storage.finalImageData = dataURL
+        done: function () {
+            if (!this.sent) {
+                this.sent = true
+                let dataURL = this.canvas.toDataURL()
+                window.storage.finalImageData = dataURL
 
-            rpc.call('/rpc', 'upload', dataURL)
-                // this shouldn't happen, log the error
-                .catch(error => console.log(error))
-                .then(resp => {
-                    if (resp.ok) {
-                        let loc = window.location
-                        let url = `${loc.protocol}//${loc.host}/archive/${resp.ok}`
-                        window.storage.finalImageURL = url
-                        this.$emit('done')
-                    } else {
-                        // this shouldn't happen, log the error
-                        console.log(error)
-                    }
-                })
-        })
+                rpc.call('/rpc', 'upload', dataURL)
+                    // this shouldn't happen, log the error
+                    .then(resp => {
+                        if (resp.ok) {
+                            let loc = window.location
+                            let url = `${loc.protocol}//${loc.host}/archive/${resp.ok}`
+                            window.storage.finalImageURL = url
+                            this.$emit('done')
+                        } else {
+                            // this shouldn't happen, log the error
+                            console.log(error)
+                        }
+                        this.sent = false
+                    })
+                    .catch(error => console.log(error))
+            }
+        }
     },
     mounted() {
         let image = this.image = new Image()
