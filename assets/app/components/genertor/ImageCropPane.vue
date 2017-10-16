@@ -1,23 +1,23 @@
 <template lang="html">
-    <div class="image-crop-pane">
+    <layout class="image-crop-pane">
         <trail :items="['Generator', 'Crop Image']"
-            class="trail"  @back="$emit('back')"/>
-        <div class="main">
-            <div class="editor">
-                <img id="editor-image"/>
-            </div>
-            <button class="button crop-button" @click="cropImage()">Crop</button>
+           slot="trail"  @back="$emit('back')"/>
+
+        <div class="editor">
+            <img id="editor-image"/>
         </div>
-    </div>
+        <button class="button crop-button" @click="cropImage()">Crop</button>
+    </layout>
 </template>
 
 <script>
 import Cropper from 'cropperjs'
 
+import Layout from './Layout'
 import Trail from '../widgets/Trail'
 
 export default {
-    components: { Trail },
+    components: { Trail, Layout },
     data () {
         return { cropper: null }
     },
@@ -43,41 +43,16 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "../../css/_flex_helper.less";
 
-.image-crop-pane {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    max-width: 112.0rem;
-    margin: 0 auto;
-
-    .trail {
-        padding-top: 1rem;
-    }
-
-    .main {
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-        .flexbox-center-center;
-
-        .editor {
-            width: 30rem;
-            height: 30rem;
-            border: 1px solid #e3e6e8;
-            border-radius: 1.5rem;
-        }
-
-        .crop-button {
-            margin-top: 2rem;
-        }
-    }
+.editor {
+    width: 30rem;
+    height: 30rem;
+    border: 1px solid #e3e6e8;
+    border-radius: 1.5rem;
 }
 
-.flexbox-center-center() {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+.crop-button {
+    margin-top: 2rem;
 }
 </style>

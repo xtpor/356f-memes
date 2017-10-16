@@ -1,26 +1,25 @@
 <template lang="html">
-    <div class="add-text-pane">
+    <layout class="add-text-pane">
         <trail :items="['Generator', 'Add Text']"
-            class="trail"  @back="$emit('back')"/>
-        <div class="content">
-            <div class="main">
-                <canvas id="editor" width="900" height="900"/>
-                <div class="inputs">
-                    <div class="item">
-                        <div class="item-name">Upper Text</div>
-                        <textarea v-model="upperText"></textarea>
-                    </div>
-                    <div class="item">
-                        <div class="item-name">Lower Text</div>
-                        <textarea v-model="lowerText"></textarea>
-                    </div>
+            slot="trail"  @back="$emit('back')"/>
+
+        <div class="editor-box">
+            <canvas id="editor" width="900" height="900"/>
+            <div class="inputs">
+                <div class="item">
+                    <div class="item-name">Upper Text</div>
+                    <textarea v-model="upperText"></textarea>
+                </div>
+                <div class="item">
+                    <div class="item-name">Lower Text</div>
+                    <textarea v-model="lowerText"></textarea>
                 </div>
             </div>
-            <button class="button" @click="done">
-                upload
-            </button>
         </div>
-    </div>
+        <button class="button" @click="done">
+            upload
+        </button>
+    </layout>
 </template>
 
 <script>
@@ -28,6 +27,7 @@ import _ from 'lodash'
 import axios from 'axios'
 import rpc from '../../rpc'
 
+import Layout from './Layout'
 import Trail from '../widgets/Trail'
 
 const config = {
@@ -117,12 +117,13 @@ function renderMemesText(canvas, upperText, lowerText, schemes, config) {
 
 
 export default {
-    components: { Trail },
+    components: { Trail, Layout },
     data() {
         return {
             upperText: "",
             lowerText: "",
             image: null,
+            sent: false,
         }
     },
     watch: {
@@ -151,25 +152,29 @@ export default {
             renderMemesText(canvas, this.upperText.toUpperCase(),
                             this.lowerText.toUpperCase(), schemes, config)
         },
-        done: _.once(function () {
-            let dataURL = this.canvas.toDataURL()
-            window.storage.finalImageData = dataURL
+        done: function () {
+            if (!this.sent) {
+                this.sent = true
+                let dataURL = this.canvas.toDataURL()
+                window.storage.finalImageData = dataURL
 
-            rpc.call('/rpc', 'upload', dataURL)
-                // this shouldn't happen, log the error
-                .catch(error => console.log(error))
-                .then(resp => {
-                    if (resp.ok) {
-                        let loc = window.location
-                        let url = `${loc.protocol}//${loc.host}/archive/${resp.ok}`
-                        window.storage.finalImageURL = url
-                        this.$emit('done')
-                    } else {
-                        // this shouldn't happen, log the error
-                        console.log(error)
-                    }
-                })
-        })
+                rpc.call('/rpc', 'upload', dataURL)
+                    // this shouldn't happen, log the error
+                    .then(resp => {
+                        if (resp.ok) {
+                            let loc = window.location
+                            let url = `${loc.protocol}//${loc.host}/archive/${resp.ok}`
+                            window.storage.finalImageURL = url
+                            this.$emit('done')
+                        } else {
+                            // this shouldn't happen, log the error
+                            console.log(error)
+                        }
+                        this.sent = false
+                    })
+                    .catch(error => console.log(error))
+            }
+        }
     },
     mounted() {
         let image = this.image = new Image()
@@ -186,55 +191,37 @@ export default {
 @import "../../css/_flex_helper.less";
 @import "../../css/_palatte.less";
 
-.add-text-pane {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    max-width: 112.0rem;
-    margin: 0 auto;
+.editor-box {
+    .flex-row;
 
-    .trail {
-        padding-top: 1rem;
+    #editor {
+        width: 30rem;
+        height: 30rem;
+        border: 1px solid @palatte-primary;
+        border-radius: 0.2rem;
     }
 
-    .content {
-        flex-grow: 1;
-        display: flex;
-        .flex-center;
+    .inputs {
+        .flex-column;
+        margin-left: 2rem;
+        justify-content: space-between;
 
-        .main {
-            .flex-row;
-
-            #editor {
-                width: 30rem;
-                height: 30rem;
-                border: 1px solid @palatte-primary;
-                border-radius: 0.2rem;
+        .item {
+            .item-name {
+                font-size: 2.0rem;
             }
 
-            .inputs {
-                .flex-column;
-                margin-left: 2rem;
-                justify-content: space-between;
-
-                .item {
-                    .item-name {
-                        font-size: 2.0rem;
-                    }
-
-                    textarea {
-                        width: 40rem;
-                        height: 11rem;
-                        resize: none;
-                    }
-                }
+            textarea {
+                width: 40rem;
+                height: 11rem;
+                resize: none;
             }
-        }
-
-        button {
-            margin-top: 1.5rem;
-            font-size: 1.0rem;
         }
     }
+}
+
+button {
+    margin-top: 1.5rem;
+    font-size: 1.0rem;
 }
 </style>

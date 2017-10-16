@@ -18,6 +18,10 @@
 
         <share-image-pane v-if="pane === 'share-image'"/>
 
+        <file-uploader-pane v-if="pane === 'file-uploader'"
+            @done="jump('image-crop')"
+            @back="jump('selection')"/>
+
         <app-footer slot="footer"></app-footer>
     </layout>
 </template>
@@ -32,11 +36,12 @@ import UrlUploaderPane from './genertor/UrlUploaderPane'
 import ImageCropPane from './genertor/ImageCropPane'
 import AddTextPane from './genertor/AddTextPane'
 import ShareImagePane from './genertor/ShareImagePane'
+import FileUploaderPane from './genertor/FileUploaderPane'
 
 export default {
     components: { Layout, Navigation, AppFooter, SelectionPane,
                   UrlUploaderPane, ImageCropPane, AddTextPane,
-                  ShareImagePane },
+                  ShareImagePane, FileUploaderPane },
     methods: {
         jump(nextPane) {
             this.pane = nextPane
