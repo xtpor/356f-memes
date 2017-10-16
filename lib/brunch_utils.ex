@@ -25,15 +25,8 @@ defmodule Brunch do
     build(:dev)
   end
 
-  def build(:dev) do
-    clean()
-    Brunch.Task.run(@build_dev)
-  end
-
-  def build(:prod) do
-    clean()
-    Brunch.Task.run(@build_prod)
-  end
+  def build(:dev), do: Brunch.Task.run(@build_dev)
+  def build(:prod), do: Brunch.Task.run(@build_prod)
 
   def clean, do: Brunch.Task.run(@clean)
 
