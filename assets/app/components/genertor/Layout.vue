@@ -11,7 +11,7 @@
 @import "../../css/_flex_helper.less";
 
 .generator-layout {
-    height: 100%;
+    align-self: stretch;
     display: flex;
     flex-direction: column;
     max-width: 112.0rem;

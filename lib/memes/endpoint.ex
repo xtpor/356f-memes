@@ -19,17 +19,11 @@ defmodule Memes.Endpoint do
   end
 
   post "/rpc" do
-    rpc_handler = JsonRpc.method_mapper(Memes.RpcEndpoint)
-    {:ok, text, conn} = read_body(conn)
+    JsonRpc.plug(conn, Memes.RpcEndpoint)
+  end
 
-    case JsonRpc.rpc(text, rpc_handler) do
-      {:reply, response} ->
-        conn
-        |> put_resp_header("content-type", "application/json")
-        |> send_resp(200, response)
-      :noreply ->
-         send_resp(conn, 204, "")
-    end
+  post "/rpc/template" do
+    JsonRpc.plug(conn, Memes.Rpc.Template)
   end
 
   match _ do

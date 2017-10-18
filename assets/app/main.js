@@ -11,6 +11,7 @@ https://github.com/theocodes/vue-brunch/issues/6 for more details.
 import lodash from 'lodash'
 import axios from 'axios'
 import cropperjs from 'cropperjs'
+import stringSimilarity from 'string-similarity'
 import rpc from './rpc'
 
 Vue.config.productionTip = false

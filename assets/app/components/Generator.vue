@@ -2,23 +2,27 @@
     <layout>
         <navigation slot="header"></navigation>
 
-        <selection-pane v-if="pane === 'selection'" @jump="jump"/>
+        <selection-pane class="item" v-if="pane === 'selection'" @jump="jump"/>
 
-        <url-uploader-pane v-if="pane === 'url-uploader'"
+        <url-uploader-pane v-if="pane === 'url-uploader'" class="item"
             @done="jump('image-crop')"
             @back="jump('selection')"/>
 
-        <image-crop-pane v-if="pane === 'image-crop'"
+        <image-crop-pane v-if="pane === 'image-crop'" class="item"
             @done="jump('add-text')"
             @back="jump('selection')"/>
 
-        <add-text-pane v-if="pane === 'add-text'"
+        <add-text-pane v-if="pane === 'add-text'" class="item"
             @done="jump('share-image')"
             @back="jump('selection')"/>
 
-        <share-image-pane v-if="pane === 'share-image'"/>
+        <share-image-pane v-if="pane === 'share-image'" class="item"/>
 
-        <file-uploader-pane v-if="pane === 'file-uploader'"
+        <file-uploader-pane v-if="pane === 'file-uploader'" class="item"
+            @done="jump('image-crop')"
+            @back="jump('selection')"/>
+
+        <album-uploader-pane v-if="pane === 'album-uploader'" class="item"
             @done="jump('image-crop')"
             @back="jump('selection')"/>
 
@@ -37,11 +41,12 @@ import ImageCropPane from './genertor/ImageCropPane'
 import AddTextPane from './genertor/AddTextPane'
 import ShareImagePane from './genertor/ShareImagePane'
 import FileUploaderPane from './genertor/FileUploaderPane'
+import AlbumUploaderPane from './genertor/AlbumUploaderPane'
 
 export default {
     components: { Layout, Navigation, AppFooter, SelectionPane,
                   UrlUploaderPane, ImageCropPane, AddTextPane,
-                  ShareImagePane, FileUploaderPane },
+                  ShareImagePane, FileUploaderPane, AlbumUploaderPane },
     methods: {
         jump(nextPane) {
             this.pane = nextPane
@@ -54,5 +59,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
+.item {
+    width: 100%;
+}
 </style>

@@ -269,4 +269,20 @@ defmodule JsonRpc do
     end
   end
 
+  def plug(conn, mod) do
+    import Plug.Conn
+
+    rpc_handler = JsonRpc.method_mapper(mod)
+    {:ok, text, conn} = read_body(conn)
+
+    case JsonRpc.rpc(text, rpc_handler) do
+      {:reply, response} ->
+        conn
+        |> put_resp_header("content-type", "application/json")
+        |> send_resp(200, response)
+      :noreply ->
+         send_resp(conn, 204, "")
+    end
+  end
+
 end

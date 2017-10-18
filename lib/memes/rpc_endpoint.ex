@@ -29,10 +29,14 @@ defmodule Memes.RpcEndpoint do
     end
   end
 
+  defp match_header(header, {value, _}) do
+    String.downcase(header) == String.downcase(value)
+  end
+
   defp mime_type(headers) do
-    case Enum.find(headers, &match?({"Content-Type", _}, &1)) do
+    case Enum.find(headers, &match_header("Content-Type", &1)) do
       nil -> :error
-      {"Content-Type", type} -> {:ok, type}
+      {_, type} -> {:ok, type}
     end
   end
 
