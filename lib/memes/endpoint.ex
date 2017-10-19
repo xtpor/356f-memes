@@ -12,6 +12,7 @@ defmodule Memes.Endpoint do
       {:ok, data} ->
         conn
         |> put_resp_header("content-type", "image/png")
+        |> put_resp_header("cache-control", "public; max-age=31556926")
         |> send_resp(200, data)
       :error ->
         send_file(conn, 200, page_path())
