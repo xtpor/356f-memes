@@ -18,7 +18,6 @@
 
 <script>
 import _ from 'lodash'
-import rpc from '../../rpc'
 
 import Layout from './Layout'
 import Trail from '../widgets/Trail'

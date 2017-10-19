@@ -80,7 +80,7 @@ export default {
         },
         click(index) {
             let url = formatURL(this.cache[this.pageNames()[index]])
-            rpc.call("/rpc", "fetch", url)
+            rpc.call("/rpc/image", "fetch", url)
                 .then(resp => {
                     window.storage.rawImageData = resp.data
                     this.$emit("done")

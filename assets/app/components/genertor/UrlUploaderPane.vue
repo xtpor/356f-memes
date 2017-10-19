@@ -39,7 +39,7 @@ export default {
                 this.status = 'Fetching the image from the internet ...'
                 this.statusClass = 'normal'
 
-                rpc.call('/rpc', 'fetch', url)
+                rpc.call('/rpc/image', 'fetch', url)
                     .catch((error) => {
                         this.status = error.message
                         this.statusClass = 'error'

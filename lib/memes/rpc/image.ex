@@ -1,4 +1,4 @@
-defmodule Memes.RpcEndpoint do
+defmodule Memes.Rpc.Image do
 
   def fetch(url) when is_binary(url) do
     case HTTPoison.get(url) do
