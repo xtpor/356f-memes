@@ -12,24 +12,19 @@ defmodule Memes.Endpoint do
       {:ok, data} ->
         conn
         |> put_resp_header("content-type", "image/png")
+        |> put_resp_header("cache-control", "public; max-age=31556926")
         |> send_resp(200, data)
       :error ->
         send_file(conn, 200, page_path())
     end
   end
 
-  post "/rpc" do
-    rpc_handler = JsonRpc.method_mapper(Memes.RpcEndpoint)
-    {:ok, text, conn} = read_body(conn)
+  post "/rpc/image" do
+    JsonRpc.plug(conn, Memes.Rpc.Image)
+  end
 
-    case JsonRpc.rpc(text, rpc_handler) do
-      {:reply, response} ->
-        conn
-        |> put_resp_header("content-type", "application/json")
-        |> send_resp(200, response)
-      :noreply ->
-         send_resp(conn, 204, "")
-    end
+  post "/rpc/template" do
+    JsonRpc.plug(conn, Memes.Rpc.Template)
   end
 
   match _ do

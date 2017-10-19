@@ -35,7 +35,6 @@ export default {
 @icon-size: 14rem;
 
 .upload-methods {
-    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;

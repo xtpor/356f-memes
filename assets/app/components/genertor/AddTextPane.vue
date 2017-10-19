@@ -158,7 +158,7 @@ export default {
                 let dataURL = this.canvas.toDataURL()
                 window.storage.finalImageData = dataURL
 
-                rpc.call('/rpc', 'upload', dataURL)
+                rpc.call('/rpc/image', 'upload', dataURL)
                     // this shouldn't happen, log the error
                     .then(resp => {
                         if (resp.ok) {

@@ -1,35 +1,41 @@
 <template>
     <div class="root">
-        <header>
-            <slot name="header"></slot>
-        </header>
-        <main>
+        <slot name="header"></slot>
+        <div class="main">
             <slot></slot>
-        </main>
+        </div>
         <footer>
             <slot name="footer"></slot>
         </footer>
     </div>
 </template>
 
-<style scoped>
-header {
-    height: 10rem;
+<style lang="less" scoped>
+@footer-height: 5rem;
+
+.root {
+    display: flex;
+    flex-direction: column;
+
+    position: relative;
+    min-height: 100%;
+    width: 112.0rem;
+    margin: 0 auto;
 }
 
-.root, main {
-    height: 100%;
-}
+.main {
+    flex-grow: 1;
 
-main {
-    margin-top: -10rem;
-    padding-top: 10rem;
-    padding-bottom: 5rem;
-    min-height: 100vh;
+    display: flex;
+
+    padding-bottom: @footer-height;
 }
 
 footer {
-    margin-top: -5rem;
-    height: 5rem;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: @footer-height;
 }
 </style>

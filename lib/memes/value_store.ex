@@ -38,7 +38,7 @@ defmodule Memes.ValueStore do
     end
   end
 
-  defp sha1_hash(data) do
+  def sha1_hash(data) do
     :crypto.hash(:sha, data)
     |> Base.encode16
     |> String.downcase

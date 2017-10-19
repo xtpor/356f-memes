@@ -57,7 +57,7 @@ export default {
 @import "../../css/_flex_helper.less";
 
 .share-image-pane {
-    height: 100%;
+    align-self: stretch;
     .flex-center;
 
     .main {
