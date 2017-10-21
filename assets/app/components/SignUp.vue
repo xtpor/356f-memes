@@ -5,17 +5,20 @@
         <div class="pane">
             <div class="pane-item">
                 Username
-                <input type="text" name="" value="">
-            </div>
-            <div class="pane-item">
-                Email Address
-                <input type="text" name="" value="">
+                <input type="text" name="username" v-model="username"/>
             </div>
             <div class="pane-item">
                 Password
-                <input type="text" name="" value="">
+                <input type="password" v-model="password"/>
             </div>
-            <button class="button pane-item">Create an account</button>
+            <div class="pane-item">
+                Email Address
+                <input type="email" v-model="email"/>
+            </div>
+            <div v-if="errorMessage !== ''" class="error-message">{{ errorMessage }}</div>
+            <button class="button pane-item" @click="register">
+                Create an account
+            </button>
         </div>
         <div class="pane-outline">
             By signing up you agree to our
@@ -27,10 +30,33 @@
 </template>
 
 <script>
+import rpc from '../rpc'
 import TitleBox from './widgets/TitleBox'
 
 export default {
-    components: { TitleBox }
+    components: { TitleBox },
+    data() {
+        return {
+            username: "",
+            password: "",
+            email: "",
+            errorMessage: "",
+        }
+    },
+    methods: {
+        register() {
+            rpc.call("/rpc/account", "register", this.username, this.password, this.email)
+                .then(result => {
+                    if (result.status === "ok") {
+                        console.log("registration ok")
+                        this.$router.push({name: 'Index'})
+                    } else if (result.status == "error") {
+                        console.log("registration error")
+                        this.errorMessage = result.reason
+                    }
+                })
+        }
+    },
 }
 </script>
 
@@ -65,6 +91,12 @@ export default {
     .pane-outline {
         font-size: 1.3rem;
         margin-top: 1rem;
+    }
+
+    .error-message {
+        margin-top: -0.5rem;
+        margin-bottom: 0.5rem;
+        color: rgb(227, 93, 89);
     }
 }
 </style>
