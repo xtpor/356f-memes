@@ -13,6 +13,7 @@ import axios from 'axios'
 import cropperjs from 'cropperjs'
 import stringSimilarity from 'string-similarity'
 import rpc from './rpc'
+import account from './account'
 
 Vue.config.productionTip = false
 

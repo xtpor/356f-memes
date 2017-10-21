@@ -15,28 +15,50 @@
                 </router-link>
             </nav>
         </div>
-        <div>
-            <router-link class="button"
-                         :to="{ name: 'SignIn' }">
-                Sign-in
-            </router-link>
-            <router-link class="button button-outline"
-                         :to="{ name: 'SignUp' }">
-                Sign-Up
-            </router-link>
+        <div class="box-right">
+            <template v-if="loginAs">
+                <div class="login-as">
+                    Welcome,
+                    <router-link :to="{ name: 'Profile' }">
+                        {{ loginAs.username }}
+                    </router-link>
+                </div>
+                <button class="button logout" @click="logout">logout</button>
+            </template>
+            <template v-else>
+                <router-link class="button"
+                             :to="{ name: 'SignIn' }">
+                    Sign-in
+                </router-link>
+                <router-link class="button button-outline"
+                             :to="{ name: 'SignUp' }">
+                    Sign-Up
+                </router-link>
+            </template>
         </div>
     </header>
 </template>
 
 <script>
 import meta from '../meta'
+import account from '../account'
 
 export default {
-    data () {
+    data() {
         return {
             meta,
-            items: ['Generator', 'Trending', 'Random', 'Search']
+            items: ['Generator', 'Trending', 'Random', 'Search'],
+            loginAs: null
         }
+    },
+    methods: {
+        logout() {
+            account.logout()
+            this.loginAs = null
+        }
+    },
+    mounted() {
+        this.loginAs = account.loginAs()
     }
 }
 </script>
@@ -96,6 +118,25 @@ export default {
 .item:hover {
     color: #9b4dca;
     text-decoration: underline;
+}
+
+.box-right {
+    display: flex;
+    align-items: center;
+
+    .login-as {
+        font-size: 1.7rem;
+    }
+
+    .logout {
+        padding-left: 1rem;
+        padding-right: 1rem;
+        border-radius: 0.5rem;
+    }
+}
+
+.box-right > * {
+    margin-left: 1rem;
 }
 
 </style>

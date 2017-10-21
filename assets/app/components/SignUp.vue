@@ -31,6 +31,7 @@
 
 <script>
 import rpc from '../rpc'
+import account from '../account'
 import TitleBox from './widgets/TitleBox'
 
 export default {
@@ -49,7 +50,8 @@ export default {
                 .then(result => {
                     if (result.status === "ok") {
                         console.log("registration ok")
-                        this.$router.push({name: 'Index'})
+                        account.login(this.username, this.password, true)
+                            .then(() => this.$router.push({name: 'Index'}))
                     } else if (result.status == "error") {
                         console.log("registration error")
                         this.errorMessage = result.reason

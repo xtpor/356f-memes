@@ -1,4 +1,5 @@
 defmodule Memes.Rpc.Account do
+  import Memes.Rpc.Utils
   import Ecto.Query, only: [from: 2]
 
   def register(username, password, email)
@@ -9,9 +10,9 @@ defmodule Memes.Rpc.Account do
          :ok <- name_available(username)
     do
       add_new_user(username, password, email)
-      {:ok, %{"status" => "ok"}}
+      ok()
     else
-      {:error, reason} -> {:ok, %{"status" => "error", "reason" => reason}}
+      {:error, reason} -> error(reason)
     end
   end
 
@@ -79,6 +80,23 @@ defmodule Memes.Rpc.Account do
       password_hash: hash,
       email: email
     ]])
+  end
+
+  def login(username, password) when is_binary(username) and is_binary(password) do
+    query =
+      from a in "accounts",
+      where: a.username == ^username,
+      select: a.password_hash
+
+    case Memes.Repo.all(query) do
+      [] ->
+        error("Invalid username or password")
+      [hash] ->
+        case Comeonin.Pbkdf2.checkpw(password, hash) do
+          true -> username |> Memes.AuthToken.issue |> ok
+          false -> error("Invalid username or password")
+        end
+    end
   end
 
 end

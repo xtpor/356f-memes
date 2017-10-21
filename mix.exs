@@ -30,7 +30,7 @@ defmodule Memes.Mixfile do
       {:sqlite_ecto2, "~> 2.2"},
       {:comeonin, "~> 4.0"},
       {:pbkdf2_elixir, "~> 0.12.3"},
-      {:json_web_token, "~> 0.2.10"},
+      {:joken, "~> 1.5"},
     ]
   end
 end
