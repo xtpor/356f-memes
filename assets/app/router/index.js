@@ -5,6 +5,7 @@ import Index from '../components/Index'
 import SignUp from '../components/SignUp'
 import SignIn from '../components/SignIn'
 import Generator from '../components/Generator'
+import User from '../components/User'
 
 Vue.use(Router)
 
@@ -24,5 +25,6 @@ export default new Router({
         { path: '/about', name: 'About', },
         { path: '/help', name: 'Help', },
         { path: '/password-reset', name: 'PasswordReset', },
+        { path: '/u/:id', name: 'User', component: User },
     ]
 })

@@ -19,7 +19,7 @@
             <template v-if="loginAs">
                 <div class="login-as">
                     Welcome,
-                    <router-link :to="{ name: 'Profile' }">
+                    <router-link :to="destination()">
                         {{ loginAs.username }}
                     </router-link>
                 </div>
@@ -47,7 +47,7 @@ export default {
     data() {
         return {
             meta,
-            items: ['Generator', 'Trending', 'Random', 'Search'],
+            items: ['Generator', 'Trends', 'Search'],
             loginAs: null
         }
     },
@@ -55,6 +55,10 @@ export default {
         logout() {
             account.logout()
             this.loginAs = null
+        },
+        destination() {
+            let user = account.loginAs().username
+            return { name: 'User', params: { id: user } }
         }
     },
     mounted() {

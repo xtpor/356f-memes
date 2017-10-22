@@ -80,6 +80,10 @@ defmodule Memes.Rpc.Account do
       password_hash: hash,
       email: email
     ]])
+
+    Memes.Repo.insert_all("profile", [[
+      username: username, name: username, bio: ""
+    ]])
   end
 
   def login(username, password) when is_binary(username) and is_binary(password) do
@@ -96,6 +100,20 @@ defmodule Memes.Rpc.Account do
           true -> username |> Memes.AuthToken.issue |> ok
           false -> error("Invalid username or password")
         end
+    end
+  end
+
+  def info(username) when is_binary(username) do
+    query =
+      from p in "profile",
+      where: p.username == ^username,
+      select: {p.name, p.bio}
+
+    case Memes.Repo.all(query) do
+      [] -> error("User not found")
+      [{name, bio}] ->
+        info = %{"username" => username, "name" => name, "bio" => bio}
+        ok(info)
     end
   end
 
