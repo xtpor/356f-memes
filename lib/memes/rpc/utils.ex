@@ -9,7 +9,28 @@ defmodule Memes.Rpc.Utils do
   end
 
   def error(reason) do
-    {:ok, %{"status" => "error", "reason" => reason}}
+    throw {:ok, %{"status" => "error", "reason" => reason}}
+  end
+
+  def at_least!(str, value, error_message) do
+    case String.length(str) >= value do
+      true -> str
+      false -> error(error_message)
+    end
+  end
+
+  def at_most!(str, value, error_message) do
+    case String.length(str) <= value do
+      true -> str
+      false -> error(error_message)
+    end
+  end
+
+  def matches!(str, regex, error_message) do
+    case Regex.match?(regex, str) do
+      true -> str
+      false -> error(error_message)
+    end
   end
 
 end

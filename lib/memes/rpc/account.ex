@@ -1,120 +1,196 @@
 defmodule Memes.Rpc.Account do
+  import Ecto.Query, only: [where: 2, update: 2, select: 2]
+  import Comeonin.Pbkdf2, only: [hashpwsalt: 1]
   import Memes.Rpc.Utils
-  import Ecto.Query, only: [from: 2]
+  import Memes.Utils
+  alias Memes.Repo
 
   def register(username, password, email)
       when is_binary(username) and is_binary(password) and is_binary(email) do
-    with :ok <- validate_username(username),
-         :ok <- validate_password(password),
-         :ok <- validate_email(email),
-         :ok <- name_available(username)
-    do
-      add_new_user(username, password, email)
-      ok()
-    else
-      {:error, reason} -> error(reason)
-    end
-  end
+    validate_username!(username)
+    validate_password!(password)
+    validate_email!(email)
+    name_available!(username)
 
-  @name_format "username can only contain hyphens, underscores and alphanumeric characters"
-  @name_too_long "username must not exceed 20 characters"
-  @name_too_short "username must be at least 3 characters"
-
-  defp validate_username(username) do
-    len = String.length(username)
-    pattern = ~r/^[-_a-zA-Z0-9]{3,32}$/
-    cond do
-      len < 3 ->
-        {:error, @name_too_short}
-      len > 20 ->
-        {:error, @name_too_long}
-      not Regex.match?(pattern, username) ->
-        {:error, @name_format}
-      true ->
-        :ok
-    end
-  end
-
-  @pass_empty "password cannot be empty"
-  @pass_too_short "password must be at least 5 characters long"
-  @pass_too_long "password cannot be longer than 64 characters"
-
-  defp validate_password(password) do
-    len = String.length(password)
-    cond do
-      len == 0 -> {:error, @pass_empty}
-      len < 5 -> {:error, @pass_too_short}
-      len > 64 -> {:error, @pass_too_long}
-      true -> :ok
-    end
-  end
-
-  @email_format "invalid email format"
-
-  defp validate_email(email) do
-    pattern = ~r/^\S+@\S+$/
-    cond do
-      not Regex.match?(pattern, email) -> {:error, @email_format}
-      true -> :ok
-    end
-  end
-
-  @already_exist "username is already taken"
-
-  defp name_available(username) do
-    query =
-      from a in "accounts",
-      where: a.username == ^username,
-      select: a.username
-
-    case Memes.Repo.all(query) do
-      [] -> :ok
-      [_user] -> {:error, @already_exist}
-    end
-  end
-
-  defp add_new_user(username, password, email) do
-    hash = Comeonin.Pbkdf2.hashpwsalt(password)
-    Memes.Repo.insert_all("accounts", [[
-      username: username,
-      password_hash: hash,
-      email: email
-    ]])
-
-    Memes.Repo.insert_all("profile", [[
-      username: username, name: username, bio: ""
-    ]])
+    add_new_user(username, password, email)
+    ok()
   end
 
   def login(username, password) when is_binary(username) and is_binary(password) do
-    query =
-      from a in "accounts",
-      where: a.username == ^username,
-      select: a.password_hash
-
-    case Memes.Repo.all(query) do
-      [] ->
-        error("Invalid username or password")
-      [hash] ->
-        case Comeonin.Pbkdf2.checkpw(password, hash) do
-          true -> username |> Memes.AuthToken.issue |> ok
-          false -> error("Invalid username or password")
-        end
+    case check_pass(username, password) do
+      true -> username |> Memes.AuthToken.issue |> ok
+      _ -> error("Invalid username or password")
     end
   end
 
   def info(username) when is_binary(username) do
-    query =
-      from p in "profile",
-      where: p.username == ^username,
-      select: {p.name, p.bio}
-
-    case Memes.Repo.all(query) do
+    username
+    |> user_profile()
+    |> select([:name, :bio, :icon])
+    |> Repo.all()
+    |> case do
       [] -> error("User not found")
-      [{name, bio}] ->
-        info = %{"username" => username, "name" => name, "bio" => bio}
-        ok(info)
+      [info] -> ok(info)
     end
+  end
+
+  def priv_info(token) when is_binary(token) do
+    [email] =
+      token
+      |> login_as!
+      |> user_account
+      |> select([:email])
+      |> Repo.all()
+
+    ok(email)
+  end
+
+  def change_password(token, old_pass, new_pass) when is_binary(token) and
+      is_binary(old_pass) and is_binary(new_pass) do
+    hash = hashpwsalt(new_pass)
+
+    token
+    |> login_as!()
+    |> check_pass!(old_pass)
+    |> user_account
+    |> update(set: [password_hash: ^hash])
+    |> Repo.update_all([])
+    ok()
+  end
+
+  def change_email(token, email) when is_binary(token) and is_binary(email) do
+    username = login_as!(token)
+    validate_email!(email)
+
+    username
+    |> user_account
+    |> update(set: [email: ^email])
+    |> Repo.update_all([])
+    ok()
+  end
+
+  def change_name(token, name) when is_binary(token) and is_binary(name) do
+    username = login_as!(token)
+    validate_name!(name)
+
+    username
+    |> user_profile
+    |> update(set: [name: ^name])
+    |> Repo.update_all([])
+    ok()
+  end
+
+  def change_bio(token, bio) when is_binary(token) and is_binary(bio) do
+    username = login_as!(token)
+    validate_bio!(bio)
+
+    username
+    |> user_profile
+    |> update(set: [bio: ^bio])
+    |> Repo.update_all([])
+    ok()
+  end
+
+  def change_icon(token, data_url)
+      when is_binary(token) and is_binary(data_url) do
+    username = login_as!(token)
+
+    image_hash =
+      case unpack_data_url(data_url) do
+        {:ok, data} -> Memes.ValueStore.put(data)
+        :error -> error("Invalid DataURL")
+      end
+
+    username
+    |> user_profile
+    |> update(set: [icon: ^image_hash])
+    |> Repo.update_all([])
+    ok(image_hash)
+  end
+
+  defp user_account(username) do
+    "accounts"
+    |> where([username: ^username])
+  end
+
+  defp user_profile(username) do
+    "profiles"
+    |> where([username: ^username])
+  end
+
+  defp validate_username!(username) do
+    username
+    |> at_least!(3, "Username must be at least 3 characters")
+    |> at_most!(20, "Username must not exceed 20 characters")
+    |> matches!(~r/^[-_a-zA-Z0-9]{3,32}$/, "Username can only contain \
+    hyphens, underscores and alphanumeric characters")
+  end
+
+  defp validate_password!(password) do
+    password
+    |> at_least!(1, "Password cannot be empty")
+    |> at_least!(5, "Password must be at least 5 characters")
+    |> at_most!(64, "Password must not exceed 64 characters")
+  end
+
+  defp validate_email!(email) do
+    email
+    |> matches!(~r/^\S+@\S+$/, "Invalid email format")
+  end
+
+  defp validate_name!(name) do
+    name
+    |> at_least!(3, "Name must be at least 3 characters")
+    |> at_most!(20, "Name must not exceed 20 characters")
+  end
+
+  defp validate_bio!(bio) do
+    bio
+    |> at_most!(512, "Bio is at most 512 characters")
+    |> matches!(~r/^([^\n]*\n){0,4}[^\n]*$/, "Bio can have at most 5 lines")
+  end
+
+  defp name_available!(username) do
+    username
+    |> user_account
+    |> select([:username])
+    |> Repo.all()
+    |> case do
+      [] -> username
+      [_user] -> error("username is already taken")
+    end
+  end
+
+  defp login_as!(token) do
+    case Memes.AuthToken.verify(token) do
+      {:ok, username} -> username
+      :error -> error("Not authenticated, invalid token")
+    end
+  end
+
+  defp check_pass(username, password) do
+    user_account(username)
+    |> select([:password_hash])
+    |> Repo.all()
+    |> case do
+      [] -> :username_nonexist
+      [%{password_hash: hash}] -> Comeonin.Pbkdf2.checkpw(password, hash)
+    end
+  end
+
+  defp check_pass!(username, password) do
+    case check_pass(username, password) do
+      true -> username
+      _ -> error("Incorrect password")
+    end
+  end
+
+  defp add_new_user(username, password, email) do
+    hash = hashpwsalt(password)
+    Repo.insert_all("accounts", [[username: username, password_hash: hash,
+                                  email: email]])
+    Repo.insert_all("profiles", [[username: username, name: username,
+                                  bio: ""]])
   end
 
 end

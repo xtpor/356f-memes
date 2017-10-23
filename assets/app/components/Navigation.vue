@@ -55,6 +55,7 @@ export default {
         logout() {
             account.logout()
             this.loginAs = null
+            this.$emit("logout")
         },
         destination() {
             let user = account.loginAs().username

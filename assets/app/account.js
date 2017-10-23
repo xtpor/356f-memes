@@ -4,9 +4,11 @@ import rpc from './rpc'
 const key = 'loginAs'
 
 export default {
+    token() {
+        return sessionStorage.getItem(key) || localStorage.getItem(key)
+    },
     loginAs() {
-        let loginAs = sessionStorage.getItem(key) ||
-                      localStorage.getItem(key)
+        let loginAs = this.token()
         if (loginAs) {
             return JSON.parse(atob(loginAs.split('.')[1]))
         } else {

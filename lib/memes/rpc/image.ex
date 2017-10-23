@@ -1,4 +1,16 @@
+defmodule Memes.Utils do
+
+  def unpack_data_url(data_url) do
+    case data_url do
+      "data:image/png;base64," <> data -> Base.decode64(data)
+      _ -> :error
+    end
+  end
+
+end
+
 defmodule Memes.Rpc.Image do
+  import Memes.Utils
 
   def fetch(url) when is_binary(url) do
     case HTTPoison.get(url) do
@@ -51,13 +63,6 @@ defmodule Memes.Rpc.Image do
         {:ok, %{"ok" => Memes.ValueStore.put(data)}}
       :error ->
         {:ok, %{"error" => "Invalid DataURL"}}
-    end
-  end
-
-  defp unpack_data_url(data_url) do
-    case data_url do
-      "data:image/png;base64," <> data -> Base.decode64(data)
-      _ -> :error
     end
   end
 

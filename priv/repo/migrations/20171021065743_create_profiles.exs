@@ -2,7 +2,7 @@ defmodule Memes.Repo.Migrations.CreateProfiles do
   use Ecto.Migration
 
   def change do
-    create table("profile", primary_key: false) do
+    create table("profiles", primary_key: false) do
       add :username, references("accounts", column: :username, type: :text),
         primary_key: true
       add :name, :string
