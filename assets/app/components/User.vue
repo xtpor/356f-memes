@@ -3,8 +3,8 @@
         <navigation slot="header" @logout="updateEditable"></navigation>
         <div v-if="info">
             <div class="user">
-                <img class="icon" :src="iconURL">
-                </img>
+                <img v-if="info.icon" class="icon" :src="`/archive/${this.info.icon}`" />
+                <img v-else class="icon" src="/images/default-icon.svg" />
                 <div class="user-info">
                     <div class="top-row">
                         <div class="name-row">
@@ -23,6 +23,23 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="memes-album">
+                <div class="album-item" v-for="item in album">
+                    <img class="icon" :src="`/archive/${item.image}`"></img>
+                    <div class="right">
+                        <span class="title">{{ item.title || "Untitled" }}</span>
+                        <span class="rest"><i class="fa fa-globe" aria-hidden="true"></i>
+                            <router-link :to="{ name: 'Meme', params: { id: item.id} }">
+                                {{ item.id }}
+                            </router-link>
+                        </span>
+
+                    </div>
+                </div>
+            </div>
+            <div v-if="album.length === 0" class="no-meme">
+                This user doesn't not have any meme to show
             </div>
         </div>
         <app-footer slot="footer"></app-footer>
@@ -43,7 +60,7 @@ export default {
         return {
             info: {bio: ""},
             editable: false,
-            iconURL: null,
+            album: [],
         }
     },
     methods: {
@@ -58,11 +75,20 @@ export default {
         let user = this.$route.params.id
         rpc.call("/rpc/account", "info", user)
             .then(resp => {
-                this.info = resp.result
-                this.info.username = user
-                this.iconURL = this.info.icon ?
-                    `/archive/${this.info.icon}` : '/images/default-icon.svg'
-                console.log(this.iconURL)
+                if (resp.status === "ok") {
+                    this.info = resp.result
+                    this.info.username = user
+                    console.log(this.iconURL)
+
+                    return rpc.call("/rpc/image", "user_album", user)
+                } else {
+                    this.$router.push({ name: "PageNotFound" })
+                }
+            })
+            .then(resp => {
+                if (resp.status === "ok") {
+                    this.album = resp.result
+                }
             })
         this.updateEditable()
     }
@@ -70,6 +96,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "../css/_flex_helper.less";
 @import "../css/_palatte.less";
 
 .user {
@@ -129,5 +156,36 @@ export default {
             margin-bottom: 1.5rem;
         }
     }
+}
+
+.memes-album {
+    .flex-column;
+    margin-left: 1rem;
+    margin-bottom: 1rem;
+
+    .album-item {
+        .flex-row;
+        align-items: flex-start;
+        margin-top: 1rem;
+
+        .icon {
+            width: 6rem;
+            height: 6rem;
+        }
+
+        .right {
+            margin-left: 1rem;
+            .flex-column;
+
+            .title {
+                font-weight: bold;
+                font-size: 1.8rem;
+            }
+        }
+    }
+}
+
+.no-meme {
+    font-size: 2.3rem;
 }
 </style>

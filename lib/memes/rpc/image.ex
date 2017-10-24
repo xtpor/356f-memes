@@ -101,6 +101,16 @@ defmodule Memes.Rpc.Image do
     end
   end
 
+  def user_album(username) when is_binary(username) do
+    import Ecto.Query
+
+    "memes"
+    |> where([m], m.username == ^username)
+    |> select([:id, :username, :title, :image])
+    |> Memes.Repo.all
+    |> ok
+  end
+
   defp gen_meme_id do
     6 |> :crypto.strong_rand_bytes |> Base.url_encode64
   end

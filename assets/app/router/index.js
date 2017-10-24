@@ -30,6 +30,7 @@ export default new Router({
         { path: '/u/:id', name: 'User', component: User },
         { path: '/m/:id', name: 'Meme', component: Meme },
         { path: '/profile', name: 'Profile', component: Profile },
-        { path: '*', name: 'PageNotFound', component: PageNotFound },
+        { path: '*', redirect: { name: 'PageNotFound' } },
+        { path: '/404', name: 'PageNotFound', component: PageNotFound },
     ]
 })
