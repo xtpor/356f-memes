@@ -27,7 +27,10 @@ defmodule Memes.Mixfile do
       {:poison, "~> 3.1"},
       {:httpoison, "~> 0.13.0"},
       {:ecto, "~> 2.2"},
-      {:sqlite_ecto2, "~> 2.2"}
+      {:sqlite_ecto2, "~> 2.2"},
+      {:comeonin, "~> 4.0"},
+      {:pbkdf2_elixir, "~> 0.12.3"},
+      {:joken, "~> 1.5"},
     ]
   end
 end

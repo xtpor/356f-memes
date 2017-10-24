@@ -27,6 +27,10 @@ defmodule Memes.Endpoint do
     JsonRpc.plug(conn, Memes.Rpc.Template)
   end
 
+  post "/rpc/account" do
+    JsonRpc.plug(conn, Memes.Rpc.Account)
+  end
+
   match _ do
     send_file(conn, 200, page_path())
   end
