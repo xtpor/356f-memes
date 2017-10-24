@@ -21,4 +21,5 @@ fi
 mix local.rebar --force
 mix ecto.create
 mix ecto.migrate
+mix run priv/repo/seeds.exs
 iex -S mix
