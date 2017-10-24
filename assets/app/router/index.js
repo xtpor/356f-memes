@@ -1,23 +1,24 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import Index from '../components/Index'
 import SignUp from '../components/SignUp'
 import SignIn from '../components/SignIn'
 import Generator from '../components/Generator'
 import User from '../components/User'
 import Profile from '../components/Profile'
+import Meme from '../components/Meme'
+import PageNotFound from '../components/PageNotFound'
 
 Vue.use(Router)
 
 export default new Router({
     mode: 'history',
     routes: [
-        { path: '/', name: 'Index', component: Index },
+        { path: '/', name: 'Index', redirect: { name: 'Generator' } },
         { path: '/register', name: 'SignUp', component: SignUp },
         { path: '/login', name: 'SignIn', component: SignIn },
         { path: '/generator', name: 'Generator', component: Generator },
-        { path: '/trending', name: 'Trending', },
+        { path: '/trends', name: 'Trends', },
         { path: '/random', name: 'Random', },
         { path: '/search', name: 'Search', },
         { path: '/privacy', name: 'Privacy', },
@@ -27,6 +28,9 @@ export default new Router({
         { path: '/help', name: 'Help', },
         { path: '/password-reset', name: 'PasswordReset', },
         { path: '/u/:id', name: 'User', component: User },
+        { path: '/m/:id', name: 'Meme', component: Meme },
         { path: '/profile', name: 'Profile', component: Profile },
+        { path: '*', redirect: { name: 'PageNotFound' } },
+        { path: '/404', name: 'PageNotFound', component: PageNotFound },
     ]
 })

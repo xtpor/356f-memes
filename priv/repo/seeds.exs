@@ -30,7 +30,7 @@ defmodule Memes.DatabaseSeeding do
 
   def run do
     url = "https://gist.githubusercontent.com/xtpor/6ecee9a102bb3503c8cb0f263f019c67/raw/a602b16c6f665a17046b3d2ac9e48cb8a5a0674a/images.tgz"
-    {:ok, %{body: content}} = HTTPoison.get(url)
+    {:ok, %{body: content}} = HTTPoison.get(url, [], timeout: 15000)
     {:ok, list} = :erl_tar.extract({:binary, content}, [:compressed, :memory])
 
     list

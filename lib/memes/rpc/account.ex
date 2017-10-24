@@ -26,7 +26,7 @@ defmodule Memes.Rpc.Account do
   def info(username) when is_binary(username) do
     username
     |> user_profile()
-    |> select([:name, :bio, :icon])
+    |> select([:name, :bio, :icon, :username])
     |> Repo.all()
     |> case do
       [] -> error("User not found")
