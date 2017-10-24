@@ -12,18 +12,15 @@
             @done="jump('add-text')"
             @back="jump('selection')"/>
 
-        <add-text-pane v-if="pane === 'add-text'" class="item"
-            @done="jump('share-image')"
-            @back="jump('selection')"/>
-
-        <share-image-pane v-if="pane === 'share-image'" class="item"/>
-
         <file-uploader-pane v-if="pane === 'file-uploader'" class="item"
             @done="jump('image-crop')"
             @back="jump('selection')"/>
 
         <album-uploader-pane v-if="pane === 'album-uploader'" class="item"
             @done="jump('image-crop')"
+            @back="jump('selection')"/>
+
+        <add-text-pane v-if="pane === 'add-text'" class="item"
             @back="jump('selection')"/>
 
         <app-footer slot="footer"></app-footer>
@@ -39,14 +36,13 @@ import SelectionPane from './genertor/SelectionPane'
 import UrlUploaderPane from './genertor/UrlUploaderPane'
 import ImageCropPane from './genertor/ImageCropPane'
 import AddTextPane from './genertor/AddTextPane'
-import ShareImagePane from './genertor/ShareImagePane'
 import FileUploaderPane from './genertor/FileUploaderPane'
 import AlbumUploaderPane from './genertor/AlbumUploaderPane'
 
 export default {
     components: { Layout, Navigation, AppFooter, SelectionPane,
                   UrlUploaderPane, ImageCropPane, AddTextPane,
-                  ShareImagePane, FileUploaderPane, AlbumUploaderPane },
+                  FileUploaderPane, AlbumUploaderPane },
     methods: {
         jump(nextPane) {
             this.pane = nextPane

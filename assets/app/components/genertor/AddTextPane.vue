@@ -3,6 +3,7 @@
         <trail :items="['Generator', 'Add Text']"
             slot="trail"  @back="$emit('back')"/>
 
+        <input class="title-input" type="text" placeholder="Title" v-model="title">
         <div class="editor-box">
             <canvas id="editor" width="900" height="900"/>
             <div class="inputs">
@@ -24,7 +25,7 @@
 
 <script>
 import _ from 'lodash'
-import axios from 'axios'
+import account from '../../account'
 import rpc from '../../rpc'
 
 import Layout from './Layout'
@@ -120,6 +121,7 @@ export default {
     components: { Trail, Layout },
     data() {
         return {
+            title: "",
             upperText: "",
             lowerText: "",
             image: null,
@@ -158,21 +160,13 @@ export default {
                 let dataURL = this.canvas.toDataURL()
                 window.storage.finalImageData = dataURL
 
-                rpc.call('/rpc/image', 'upload', dataURL)
-                    // this shouldn't happen, log the error
+                rpc.call('/rpc/image', 'upload_meme', account.token(), this.title, dataURL)
                     .then(resp => {
-                        if (resp.ok) {
-                            let loc = window.location
-                            let url = `${loc.protocol}//${loc.host}/archive/${resp.ok}`
-                            window.storage.finalImageURL = url
-                            this.$emit('done')
-                        } else {
-                            // this shouldn't happen, log the error
-                            console.log(error)
+                        if (resp.status === "ok") {
+                            console.log(resp.result)
+                            this.$router.push({ name: "Meme", params: { id: resp.result }})
                         }
-                        this.sent = false
                     })
-                    .catch(error => console.log(error))
             }
         }
     },
@@ -190,6 +184,13 @@ export default {
 <style lang="less" scoped>
 @import "../../css/_flex_helper.less";
 @import "../../css/_palatte.less";
+
+.title-input {
+    width: 72rem;
+    height: 4.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+}
 
 .editor-box {
     .flex-row;

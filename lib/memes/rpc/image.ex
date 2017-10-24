@@ -11,6 +11,7 @@ end
 
 defmodule Memes.Rpc.Image do
   import Memes.Utils
+  import Memes.Rpc.Utils
 
   def fetch(url) when is_binary(url) do
     case HTTPoison.get(url) do
@@ -57,13 +58,51 @@ defmodule Memes.Rpc.Image do
     "data:#{type};base64,#{Base.encode64 body}"
   end
 
-  def upload(data_url) when is_binary(data_url) do
-    case unpack_data_url(data_url) do
-      {:ok, data} ->
-        {:ok, %{"ok" => Memes.ValueStore.put(data)}}
-      :error ->
-        {:ok, %{"error" => "Invalid DataURL"}}
+  def upload_meme(token, title, data_url) when
+      (is_binary(token) or is_nil(token)) and
+      is_binary(title) and is_binary(data_url) do
+    uname =
+      case token do
+        nil -> nil
+        t ->
+          case Memes.AuthToken.verify(t) do
+            {:ok, un} -> un
+            :error -> error("Invalid token")
+          end
+      end
+
+    hash =
+      case unpack_data_url(data_url) do
+        {:ok, d} -> d
+        :error -> error("Invalid DataURL")
+      end
+      |> Memes.ValueStore.put
+
+    title = String.slice(title, 0..31)
+
+    id = gen_meme_id()
+
+    Memes.Repo.insert_all("memes",
+      [[id: id, username: uname, title: title, image: hash]])
+
+    ok(id)
+  end
+
+  def meme_info(id) when is_binary(id) do
+    import Ecto.Query
+
+    "memes"
+    |> where([m], m.id == ^id)
+    |> select([:id, :username, :title, :image])
+    |> Memes.Repo.all
+    |> case do
+      [] -> error("Meme not exist")
+      [info] -> ok(info)
     end
+  end
+
+  defp gen_meme_id do
+    6 |> :crypto.strong_rand_bytes |> Base.url_encode64
   end
 
 end
