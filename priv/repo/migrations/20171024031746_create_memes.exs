@@ -7,6 +7,7 @@ defmodule Memes.Repo.Migrations.CreateMemes do
       add :username, references("accounts", column: :username, type: :text)
       add :title, :text
       add :image, references("images", column: :hash, type: :string)
+      add :created_at, :utc_datetime
     end
   end
 end

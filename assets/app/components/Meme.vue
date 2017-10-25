@@ -14,12 +14,17 @@
                             <span v-else>Untitled</span>
                         </span>
                         <div class="name">
+                            <i class="fa fa-user-o" aria-hidden="true"></i>
                             Created by
                             <router-link :to="{ name: 'User', params: {id: user.username} }"
                                 v-if="user && user.username">
                                 {{ user.username }}
                             </router-link>
                             <span v-else>a guest</span>
+                            <span v-if="meme">
+                                <i class="fa fa-clock-o" aria-hidden="true"></i>
+                                {{ formatFromNow(meme.created_at) }}
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -34,6 +39,7 @@
 </template>
 
 <script>
+import { formatFromNow } from '../utils'
 import rpc from '../rpc'
 
 import Layout from './Layout'
@@ -48,6 +54,9 @@ export default {
             user: null,
             meme: null
         }
+    },
+    methods: {
+        formatFromNow
     },
     mounted() {
         rpc.call("/rpc/image", "meme_info", this.$route.params.id)

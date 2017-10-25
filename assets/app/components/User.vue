@@ -29,10 +29,21 @@
                     <img class="icon" :src="`/archive/${item.image}`"></img>
                     <div class="right">
                         <span class="title">{{ item.title || "Untitled" }}</span>
-                        <span class="rest"><i class="fa fa-globe" aria-hidden="true"></i>
-                            <router-link :to="{ name: 'Meme', params: { id: item.id} }">
-                                {{ item.id }}
-                            </router-link>
+                        <span class="rest">
+                            <span class="info-item">
+                                <i class="fa fa-globe" aria-hidden="true"></i>
+                                <router-link :to="{ name: 'Meme', params: { id: item.id} }">
+                                    {{ item.id }}
+                                </router-link>
+                            </span>
+                            <span class="info-item">
+                                <i class="fa fa-clock-o" aria-hidden="true"></i>
+                                {{ formatFromNow(item.created_at) }}
+                            </span>
+                            <span class="info-item">
+                                <i class="fa fa-calendar" aria-hidden="true"></i>
+                                {{ formatDate(item.created_at) }}
+                            </span>
                         </span>
 
                     </div>
@@ -47,6 +58,7 @@
 </template>
 
 <script>
+import { formatFromNow, formatDate } from 'utils'
 import rpc from '../rpc'
 import account from '../account'
 
@@ -64,12 +76,14 @@ export default {
         }
     },
     methods: {
+        formatFromNow,
+        formatDate,
         updateEditable() {
             let user = this.$route.params.id
             console.log("updateEditable")
             let as = account.loginAs()
             this.editable = as && as.username === user
-        }
+        },
     },
     mounted() {
         let user = this.$route.params.id
@@ -180,6 +194,10 @@ export default {
             .title {
                 font-weight: bold;
                 font-size: 1.8rem;
+            }
+
+            .info-item {
+                margin-right: 1.5rem;
             }
         }
     }

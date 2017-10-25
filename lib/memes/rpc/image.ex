@@ -79,11 +79,11 @@ defmodule Memes.Rpc.Image do
       |> Memes.ValueStore.put
 
     title = String.slice(title, 0..31)
-
+    now = DateTime.utc_now
     id = gen_meme_id()
 
     Memes.Repo.insert_all("memes",
-      [[id: id, username: uname, title: title, image: hash]])
+      [[id: id, username: uname, title: title, image: hash, created_at: now]])
 
     ok(id)
   end
@@ -93,11 +93,11 @@ defmodule Memes.Rpc.Image do
 
     "memes"
     |> where([m], m.id == ^id)
-    |> select([:id, :username, :title, :image])
+    |> select([:id, :username, :title, :image, :created_at])
     |> Memes.Repo.all
     |> case do
       [] -> error("Meme not exist")
-      [info] -> ok(info)
+      [info] -> info |> to_iso8601 |> ok()
     end
   end
 
@@ -106,13 +106,18 @@ defmodule Memes.Rpc.Image do
 
     "memes"
     |> where([m], m.username == ^username)
-    |> select([:id, :username, :title, :image])
+    |> select([:id, :username, :title, :image, :created_at])
     |> Memes.Repo.all
+    |> Enum.map(&to_iso8601/1)
     |> ok
   end
 
   defp gen_meme_id do
     6 |> :crypto.strong_rand_bytes |> Base.url_encode64
+  end
+
+  defp to_iso8601(%{created_at: t} = record) do
+    %{ record | created_at: t <> "Z" }
   end
 
 end
