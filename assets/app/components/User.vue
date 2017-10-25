@@ -48,6 +48,10 @@
                                 <i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
                                 {{ item.num_likes }}
                             </span>
+                            <span class="info-item">
+                                <i class="fa fa-comments-o" aria-hidden="true"></i>
+                                {{ item.comments.length }}
+                            </span>
                         </span>
 
                     </div>

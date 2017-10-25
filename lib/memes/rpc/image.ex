@@ -101,6 +101,7 @@ defmodule Memes.Rpc.Image do
         info
         |> to_iso8601
         |> calculate_num_likes
+        |> fetch_comments
         |> ok()
     end
   end
@@ -112,6 +113,7 @@ defmodule Memes.Rpc.Image do
     |> Repo.all
     |> Enum.map(&to_iso8601/1)
     |> Enum.map(&calculate_num_likes/1)
+    |> Enum.map(&fetch_comments/1)
     |> ok
   end
 
@@ -162,6 +164,30 @@ defmodule Memes.Rpc.Image do
       |> Repo.all
 
     Map.put(record, :num_likes, number)
+  end
+
+  def comment(token, meme, content)
+      when is_binary(token) and is_binary(meme) and is_binary(content) do
+    now = DateTime.utc_now
+    uname = login_as!(token)
+    at_least!(content, 1, "Comment cannot be empty")
+    at_most!(content, 2000, "Comment cannot has more than 2000 characters")
+
+    Repo.insert_all("comments", [[
+      username: uname, meme: meme, content: content, created_at: now]])
+    ok()
+  end
+
+  defp fetch_comments(%{id: meme} = record) do
+    comments =
+      "comments"
+      |> where([c], c.meme == ^meme)
+      |> select([:username, :content, :created_at])
+      |> order_by([desc: :created_at])
+      |> Repo.all
+      |> Enum.map(&to_iso8601/1)
+
+    Map.put(record, :comments, comments)
   end
 
 end

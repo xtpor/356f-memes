@@ -44,6 +44,39 @@
                     <button v-else-if="!liked" class="button" @click="like">Like</button>
                     <button v-else class="button button-outline" @click="unlike">Liked</button>
                 </div>
+                <div class="add-comment">
+                    <span v-if="!loginAs" class="please-login">Please
+                        <router-link :to="{ name: 'SignIn' }">sign in</router-link>
+                        to comment
+                    </span>
+                    <div class="comment-box" v-else>
+                        <h2 class="comment-heading">Comment</h2>
+                        <textarea class="comment-area" v-model="content"></textarea>
+                        <button class="button button-outline" @click="comment">comment</button>
+                        <span v-if="commentError" class="error-message">{{ commentError }}</span>
+                        <span v-if="commentMessage" class="info-message">{{ commentMessage }}</span>
+                    </div>
+                </div>
+                <div class="comments" v-if="meme">
+                    <div class="comment" v-for="comment in meme.comments">
+                        <div class="comment-user">
+                            <router-link :to="{ name: 'User', params: { id: comment.username} }">
+                            <img v-if="icons[comment.username]" class="icon"
+                                :src="`/archive/${icons[comment.username]}`"/>
+                            <img v-else
+                                class="icon" src="/images/default-icon.svg"/>
+                            </router-link>
+                            <router-link class="username" :to="{ name: 'User', params: { id: comment.username} }">
+                                {{ comment.username }}
+                            </router-link>
+                            <span>
+                                <i class="fa fa-clock-o" aria-hidden="true"></i>
+                                {{ formatFromNow(comment.created_at) }}
+                            </span>
+                        </div>
+                        <div class="comment-content">{{ comment.content }}</div>
+                    </div>
+                </div>
             </div>
         </div>
         <app-footer slot="footer"></app-footer>
@@ -51,6 +84,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import { formatFromNow } from '../utils'
 import account from '../account'
 import rpc from '../rpc'
@@ -67,13 +101,43 @@ export default {
             loginAs: null,
             liked: true,
             user: null,
-            meme: null
+            meme: null,
+            icons: {},
+            content: "",
+            commentError: "",
+            commentMessage: "",
         }
     },
     methods: {
         formatFromNow,
         logout() {
             this.loginAs = null
+        },
+        comment() {
+            let id = this.$route.params.id
+            rpc.call("/rpc/image", "comment", account.token(), id, this.content)
+                .then(resp => {
+                    if (resp.status === "ok") {
+                        this.commentError = ""
+                        this.commentMessage = "Added your comment"
+                        this.content = ""
+                        return rpc.call("/rpc/image", "meme_info", id)
+                    } else {
+                        this.commentError = resp.reason
+                        this.commentMessage = ""
+                    }
+                })
+                .then(resp => {
+                    this.meme = resp.result
+                    this.reloadIcons()
+                })
+        },
+        reloadIcons() {
+            _.each(_.uniq(_.map(this.meme.comments, "username")), uname => {
+                rpc.call("/rpc/account", "info", uname).then(resp => {
+                    this.$set(this.icons, uname, resp.result.icon)
+                })
+            })
         },
         like() {
             let id = this.$route.params.id
@@ -121,6 +185,8 @@ export default {
                                 this.liked = resp.result
                             })
                     }
+
+                    this.reloadIcons()
                 } else {
                     this.$router.push({ name: "PageNotFound" })
                 }
@@ -131,6 +197,7 @@ export default {
 
 <style lang="less" scoped>
 @import "../css/_flex_helper.less";
+@import "../css/_palatte.less";
 
 .meme-container {
     width: 112.0rem;
@@ -197,6 +264,63 @@ export default {
             vertical-align: middle;
             line-height: 3.6rem;
             font-size: 1.8rem;
+        }
+    }
+
+    .add-comment {
+        .comment-box {
+            .flex-column;
+            .comment-heading {
+                margin-bottom: 0.5rem;
+                font-size: 1.8rem;
+            }
+
+            .comment-area {
+                height: 10rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .error-message {
+                color: rgb(209, 87, 87)
+            }
+
+            .info-message {
+                color: rgb(71, 172, 72)
+            }
+        }
+    }
+
+    .comments {
+        margin-bottom: 1rem;
+        .comment {
+            margin-top: 1.5rem;
+
+            .comment-user {
+                .flex-row;
+                align-items: flex-start;
+                margin-bottom: 0.7rem;
+
+                .icon {
+                    width: 4rem;
+                    height: 4rem;
+                }
+
+                .username {
+                    margin-left: 1rem;
+                    margin-right: 1rem;
+                    font-size: 1.7rem;
+                    font-weight: bold;
+                    color: @palatte-primary;
+                }
+
+                .username:hover {
+                    text-decoration: underline;
+                }
+            }
+
+            .comment-content {
+                white-space: pre-wrap;
+            }
         }
     }
 }
