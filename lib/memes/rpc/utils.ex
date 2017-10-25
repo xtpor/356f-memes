@@ -33,4 +33,11 @@ defmodule Memes.Rpc.Utils do
     end
   end
 
+  def login_as!(token) do
+    case Memes.AuthToken.verify(token) do
+      {:ok, username} -> username
+      :error -> error("Not authenticated, invalid token")
+    end
+  end
+
 end

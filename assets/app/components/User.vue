@@ -44,6 +44,10 @@
                                 <i class="fa fa-calendar" aria-hidden="true"></i>
                                 {{ formatDate(item.created_at) }}
                             </span>
+                            <span class="info-item">
+                                <i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+                                {{ item.num_likes }}
+                            </span>
                         </span>
 
                     </div>

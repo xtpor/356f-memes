@@ -1,6 +1,6 @@
 <template lang="html">
     <layout>
-        <navigation slot="header"></navigation>
+        <navigation slot="header" @logout="logout"></navigation>
         <div class="meme-container">
             <div class="meme-main">
                 <div class="heading">
@@ -32,6 +32,18 @@
                     <img v-if="meme && meme.image" :src="`/archive/${meme.image}`"/>
                 </div>
                 <url-box class="url-box" v-if="meme" :url="`/archive/${meme.image}`"></url-box>
+                <div class="likes">
+                    <div class="likes-display">
+                        <i class="fa fa-thumbs-up" aria-hidden="true"></i>
+                        <span v-if="meme">{{ meme.num_likes }}</span>
+                    </div>
+                    <span v-if="!loginAs" class="please-login">Please
+                        <router-link :to="{ name: 'SignIn' }">sign in</router-link>
+                        to like
+                    </span>
+                    <button v-else-if="!liked" class="button" @click="like">Like</button>
+                    <button v-else class="button button-outline" @click="unlike">Liked</button>
+                </div>
             </div>
         </div>
         <app-footer slot="footer"></app-footer>
@@ -40,6 +52,7 @@
 
 <script>
 import { formatFromNow } from '../utils'
+import account from '../account'
 import rpc from '../rpc'
 
 import Layout from './Layout'
@@ -51,15 +64,45 @@ export default {
     components: { Layout, Navigation, AppFooter, UrlBox },
     data() {
         return {
+            loginAs: null,
+            liked: true,
             user: null,
             meme: null
         }
     },
     methods: {
-        formatFromNow
+        formatFromNow,
+        logout() {
+            this.loginAs = null
+        },
+        like() {
+            let id = this.$route.params.id
+            rpc.call("/rpc/image", "like", account.token(), id)
+                .then(resp => {
+                    if (resp.status === "ok") {
+                        this.liked = true
+                        return rpc.call("/rpc/image", "meme_info", id)
+                    }
+                })
+                .then(resp => this.meme = resp.result)
+        },
+        unlike() {
+            let id = this.$route.params.id
+            rpc.call("/rpc/image", "unlike", account.token(), id)
+                .then(resp => {
+                    if (resp.status === "ok") {
+                        this.liked = false
+                        return rpc.call("/rpc/image", "meme_info", id)
+                    }
+                })
+                .then(resp => this.meme = resp.result)
+        }
     },
     mounted() {
-        rpc.call("/rpc/image", "meme_info", this.$route.params.id)
+        let memeId = this.$route.params.id
+        this.loginAs = account.loginAs()
+
+        rpc.call("/rpc/image", "meme_info", memeId)
             .then(resp => {
                 if (resp.status === "ok") {
                     console.log('fetched meme info ', resp.result)
@@ -69,6 +112,13 @@ export default {
                             .then(resp => {
                                 console.log('fetched user info', resp.result)
                                 this.user = resp.result
+                            })
+                    }
+
+                    if (this.loginAs) {
+                        rpc.call("/rpc/image", "like_status", account.token(), memeId)
+                            .then(resp => {
+                                this.liked = resp.result
                             })
                     }
                 } else {
@@ -126,6 +176,28 @@ export default {
 
     .url-box {
         margin-bottom: 1rem;
+    }
+
+    .likes {
+        .flex-row;
+
+        .likes-display {
+            margin-right: 1rem;
+            border: 1px solid #e4e1e1;
+            border-radius: 0.7rem;
+            width: 8rem;
+            height: 4rem;
+            font-size: 1.8rem;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 3.6rem;
+        }
+
+        .please-login {
+            vertical-align: middle;
+            line-height: 3.6rem;
+            font-size: 1.8rem;
+        }
     }
 }
 </style>

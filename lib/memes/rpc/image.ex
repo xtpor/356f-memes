@@ -12,6 +12,8 @@ end
 defmodule Memes.Rpc.Image do
   import Memes.Utils
   import Memes.Rpc.Utils
+  import Ecto.Query
+  alias Memes.Repo
 
   def fetch(url) when is_binary(url) do
     case HTTPoison.get(url) do
@@ -82,33 +84,34 @@ defmodule Memes.Rpc.Image do
     now = DateTime.utc_now
     id = gen_meme_id()
 
-    Memes.Repo.insert_all("memes",
+    Repo.insert_all("memes",
       [[id: id, username: uname, title: title, image: hash, created_at: now]])
 
     ok(id)
   end
 
   def meme_info(id) when is_binary(id) do
-    import Ecto.Query
-
     "memes"
     |> where([m], m.id == ^id)
     |> select([:id, :username, :title, :image, :created_at])
-    |> Memes.Repo.all
+    |> Repo.all
     |> case do
       [] -> error("Meme not exist")
-      [info] -> info |> to_iso8601 |> ok()
+      [info] ->
+        info
+        |> to_iso8601
+        |> calculate_num_likes
+        |> ok()
     end
   end
 
   def user_album(username) when is_binary(username) do
-    import Ecto.Query
-
     "memes"
     |> where([m], m.username == ^username)
     |> select([:id, :username, :title, :image, :created_at])
-    |> Memes.Repo.all
+    |> Repo.all
     |> Enum.map(&to_iso8601/1)
+    |> Enum.map(&calculate_num_likes/1)
     |> ok
   end
 
@@ -118,6 +121,47 @@ defmodule Memes.Rpc.Image do
 
   defp to_iso8601(%{created_at: t} = record) do
     %{ record | created_at: t <> "Z" }
+  end
+
+  def like(token, meme) when is_binary(token) and is_binary(meme) do
+    username = login_as!(token)
+    try do
+      Repo.insert_all("likes", [[username: username, meme: meme]])
+      ok()
+    rescue
+      _ -> error("Invalid operation, already liked")
+    end
+  end
+
+  def unlike(token, meme) when is_binary(token) and is_binary(meme) do
+    username = login_as!(token)
+    "likes"
+    |> where([l], l.username == ^username and l.meme == ^meme)
+    |> Repo.delete_all
+    ok()
+  end
+
+  def like_status(token, meme) when is_binary(token) and is_binary(meme) do
+    username = login_as!(token)
+    "likes"
+    |> where([l], l.username == ^username and l.meme == ^meme)
+    |> select([:meme])
+    |> Repo.all
+    |> case do
+      [] -> false
+      [_] -> true
+    end
+    |> ok
+  end
+
+  defp calculate_num_likes(%{id: meme} = record) do
+    [number] =
+      "likes"
+      |> where([meme: ^meme])
+      |> select([l], count(l.username))
+      |> Repo.all
+
+    Map.put(record, :num_likes, number)
   end
 
 end
