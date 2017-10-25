@@ -161,13 +161,6 @@ defmodule Memes.Rpc.Account do
     end
   end
 
-  defp login_as!(token) do
-    case Memes.AuthToken.verify(token) do
-      {:ok, username} -> username
-      :error -> error("Not authenticated, invalid token")
-    end
-  end
-
   defp check_pass(username, password) do
     user_account(username)
     |> select([:password_hash])
