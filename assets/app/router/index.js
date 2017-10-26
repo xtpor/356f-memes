@@ -7,6 +7,7 @@ import Generator from '../components/Generator'
 import User from '../components/User'
 import Profile from '../components/Profile'
 import Meme from '../components/Meme'
+import Trends from '../components/Trends'
 import PageNotFound from '../components/PageNotFound'
 
 Vue.use(Router)
@@ -18,7 +19,7 @@ export default new Router({
         { path: '/register', name: 'SignUp', component: SignUp },
         { path: '/login', name: 'SignIn', component: SignIn },
         { path: '/generator', name: 'Generator', component: Generator },
-        { path: '/trends', name: 'Trends', },
+        { path: '/trends', name: 'Trends', component: Trends },
         { path: '/random', name: 'Random', },
         { path: '/search', name: 'Search', },
         { path: '/privacy', name: 'Privacy', },
