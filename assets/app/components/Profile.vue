@@ -235,6 +235,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "../css/_utils.less";
 @import "../css/_palatte.less";
 @import "../css/_flex_helper.less";
 
@@ -263,8 +264,7 @@ export default {
     }
 
     .profile-icon {
-        width: 10rem;
-        height: 10rem;
+        .square(10rem);
         border-radius: 0.3rem;
         border: 1px solid @palatte-border;
     }

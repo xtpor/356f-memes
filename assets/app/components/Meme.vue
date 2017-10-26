@@ -196,6 +196,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "../css/_utils.less";
 @import "../css/_flex_helper.less";
 @import "../css/_palatte.less";
 
@@ -214,8 +215,7 @@ export default {
         margin-top: 1rem;
 
         .icon {
-            width: 7rem;
-            height: 7rem;
+            .square(7rem);
             border: 1px solid @palatte-border;
             border-radius: 0.5rem;
         }
@@ -237,8 +237,7 @@ export default {
     .meme-image {
         margin-top: 1rem;
         border: 1px solid @palatte-border;
-        height: 40rem;
-        width: 40rem;
+        .square(40rem);
     }
 
     .url-box {
@@ -301,8 +300,7 @@ export default {
                 margin-bottom: 0.7rem;
 
                 .icon {
-                    width: 4rem;
-                    height: 4rem;
+                    .square(4rem);
                 }
 
                 .username {

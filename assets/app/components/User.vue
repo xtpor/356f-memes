@@ -118,6 +118,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "../css/_utils.less";
 @import "../css/_flex_helper.less";
 @import "../css/_palatte.less";
 
@@ -130,8 +131,7 @@ export default {
     .icon {
         margin-left: 0.3rem;
         margin-bottom: 0.5rem;
-        width: 10rem;
-        height: 10rem;
+        .square(10rem);
         border-radius: 0.3rem;
     }
 
@@ -191,8 +191,7 @@ export default {
         margin-top: 1rem;
 
         .icon {
-            width: 6rem;
-            height: 6rem;
+            .square(6rem);
         }
 
         .right {

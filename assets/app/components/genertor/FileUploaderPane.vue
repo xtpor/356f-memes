@@ -62,6 +62,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "../../css/_utils.less";
 @import "../../css/_palatte.less";
 @import "../../css/_flex_helper.less";
 
@@ -70,8 +71,7 @@ export default {
 
     border: 1px solid @palatte-primary;
     border-radius: 0.7rem;
-    width: 30rem;
-    height: 30rem;
+    .square(30rem);
 
     .drag-n-drop-text {
         font-size: 2.5rem;
