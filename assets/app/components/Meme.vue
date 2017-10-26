@@ -216,7 +216,7 @@ export default {
         .icon {
             width: 7rem;
             height: 7rem;
-            border: 1px solid #e4e1e1;
+            border: 1px solid @palatte-border;
             border-radius: 0.5rem;
         }
 
@@ -236,7 +236,7 @@ export default {
 
     .meme-image {
         margin-top: 1rem;
-        border: 1px solid #e4e1e1;
+        border: 1px solid @palatte-border;
         height: 40rem;
         width: 40rem;
     }
@@ -250,7 +250,7 @@ export default {
 
         .likes-display {
             margin-right: 1rem;
-            border: 1px solid #e4e1e1;
+            border: 1px solid @palatte-border;
             border-radius: 0.7rem;
             width: 8rem;
             height: 4rem;
@@ -281,11 +281,11 @@ export default {
             }
 
             .error-message {
-                color: rgb(209, 87, 87)
+                color: @palatte-failure;
             }
 
             .info-message {
-                color: rgb(71, 172, 72)
+                color: @palatte-success;
             }
         }
     }

@@ -16,6 +16,8 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "../../css/_palatte.less";
+
 .title-box {
     max-width: 30rem;
     display: flex;
@@ -23,7 +25,7 @@ export default {
     align-items: center;
 
     .title {
-        color: #606c76;
+        color: @palatte-primary;
         font-weight: bold;
         font-size: 2.5rem;
     }
