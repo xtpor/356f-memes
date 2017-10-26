@@ -94,7 +94,6 @@ export default {
 }
 
 .title {
-    // border: 1px solid black;
     color: @palatte-primary;
     font-weight: bold;
     font-size: 2.5rem;
@@ -107,7 +106,6 @@ export default {
 .subtitle {
     margin-top: -1rem;
     font-size: 1.5rem;
-    // border: 1px solid black;
 }
 
 #nav {
