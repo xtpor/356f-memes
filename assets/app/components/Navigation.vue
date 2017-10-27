@@ -8,11 +8,17 @@
                 <span class="subtitle">{{ meta.subtitle }}</span>
             </div>
             <nav id="nav">
-                <router-link class="item"
-                             v-for="item in items"
-                             :to="{ name: item }">
-                    {{ item }}
+                <router-link class="item" :to="{ name: 'Generator' }">
+                    Generator
                 </router-link>
+                <router-link class="item" :to="{ name: 'Trends' }">
+                    Trends
+                </router-link>
+                <div class="item search-bar" v-if="searchBar !== 'hide'">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                    <input type="search" placeholder="search..." v-model="searchText"
+                        @keydown.enter="search">
+                </div>
             </nav>
         </div>
         <div class="box-right">
@@ -44,11 +50,13 @@ import meta from '../meta'
 import account from '../account'
 
 export default {
+    props: ['searchBar'],
     data() {
         return {
             meta,
             items: ['Generator', 'Trends', 'Search'],
-            loginAs: null
+            loginAs: null,
+            searchText: ""
         }
     },
     methods: {
@@ -60,6 +68,9 @@ export default {
         destination() {
             let user = account.loginAs().username
             return { name: 'User', params: { id: user } }
+        },
+        search() {
+            this.$router.push({ name: 'Search', query: { m: 'meme', q: this.searchText }})
         }
     },
     mounted() {
@@ -70,6 +81,7 @@ export default {
 
 <style lang="less" scoped>
 @import "../css/_palatte.less";
+@import "../css/_flex_helper.less";
 
 .header {
     height: 10%;
@@ -117,12 +129,31 @@ export default {
     text-decoration: none;
     color: @palatte-primary;
     font-size: 1.8rem;
-    margin-left: 5rem;
+    margin-left: 3.9rem;
 }
 
 .item:hover {
     color: @palatte-secondary;
     text-decoration: underline;
+}
+
+.search-bar {
+    .flex-row;
+    align-items: center;
+
+    i {
+        margin-right: -2.5rem;
+    }
+
+    input[type="search"] {
+        padding-left: 3rem;
+        width: 32rem;
+    }
+}
+
+.search-bar:hover {
+    text-decoration: none;
+    color: @palatte-primary;
 }
 
 .box-right {
