@@ -19,8 +19,8 @@ defmodule Memes.Endpoint do
     end
   end
 
-  post "/rpc/meme" do
-    JsonRpc.plug(conn, Memes.Rpc.Meme)
+  post "/rpc/trends" do
+    JsonRpc.plug(conn, Memes.Rpc.Trends)
   end
 
   post "/rpc/image" do
