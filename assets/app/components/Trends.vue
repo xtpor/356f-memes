@@ -15,9 +15,10 @@
             </div>
             <div class="trends-grid">
                 <div class="meme" v-for="meme in memes">
-                    <div class="image">
+                    <router-link :to="{ name: 'Meme', params: { id: meme.id } }"
+                        class="image">
                         <img :src="imageURL(meme.image)"/>
-                    </div>
+                    </router-link>
                     <div class="user-info fx-row">
                         <div class="icon">
                             <img v-if="meme.icon" :src="imageURL(meme.icon)" />
