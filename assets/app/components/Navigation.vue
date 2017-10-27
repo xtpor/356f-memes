@@ -69,6 +69,8 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "../css/_palatte.less";
+
 .header {
     height: 10%;
     width: 112.0rem;
@@ -92,8 +94,7 @@ export default {
 }
 
 .title {
-    // border: 1px solid black;
-    color: #606c76;
+    color: @palatte-primary;
     font-weight: bold;
     font-size: 2.5rem;
 }
@@ -105,7 +106,6 @@ export default {
 .subtitle {
     margin-top: -1rem;
     font-size: 1.5rem;
-    // border: 1px solid black;
 }
 
 #nav {
@@ -115,13 +115,13 @@ export default {
 
 .item {
     text-decoration: none;
-    color: #606c76;
+    color: @palatte-primary;
     font-size: 1.8rem;
     margin-left: 5rem;
 }
 
 .item:hover {
-    color: #9b4dca;
+    color: @palatte-secondary;
     text-decoration: underline;
 }
 

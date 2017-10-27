@@ -182,6 +182,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "../../css/_utils.less";
 @import "../../css/_flex_helper.less";
 @import "../../css/_palatte.less";
 
@@ -196,8 +197,7 @@ export default {
     .flex-row;
 
     #editor {
-        width: 30rem;
-        height: 30rem;
+        .square(30rem);
         border: 1px solid @palatte-primary;
         border-radius: 0.2rem;
     }

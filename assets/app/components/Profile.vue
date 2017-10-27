@@ -235,6 +235,8 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "../css/_utils.less";
+@import "../css/_palatte.less";
 @import "../css/_flex_helper.less";
 
 .profile {
@@ -262,10 +264,9 @@ export default {
     }
 
     .profile-icon {
-        width: 10rem;
-        height: 10rem;
+        .square(10rem);
         border-radius: 0.3rem;
-        border: 1px solid #e4e1e1;
+        border: 1px solid @palatte-border;
     }
 
     .profile-bio {
@@ -284,11 +285,11 @@ export default {
 }
 
 .status-ok {
-    color: rgb(71, 172, 72)
+    color: @palatte-success;
 }
 
 .status-error {
-    color: rgb(214, 84, 84)
+    color: @palatte-failure;
 }
 
 .profile-wrapper {

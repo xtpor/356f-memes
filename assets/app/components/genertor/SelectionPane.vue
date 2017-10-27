@@ -30,6 +30,7 @@ export default {
 </script>
 
 <style lang="less">
+@import "../../css/_utils.less";
 @import "../../css/_palatte.less";
 
 @icon-size: 14rem;
@@ -60,9 +61,7 @@ export default {
         align-items: center;
 
         .item-icon {
-            // border: 1px solid black;
-            width: @icon-size;
-            height: @icon-size;
+            .square(@icon-size);
         }
 
         .icon-album, .icon-upload, .icon-internet {

@@ -119,6 +119,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "../../css/_utils.less";
 @import "../../css/_palatte.less";
 @import "../../css/_flex_helper.less";
 
@@ -147,18 +148,15 @@ export default {
         .item-image {
             border: 1px solid @palatte-primary;
             border-radius: 0.3rem;
-            width: 10rem;
-            height: 10rem;
+            .square(10rem);
 
             .flex-center;
             i {
-                width: 5rem;
-                height: 5rem;
+                .square(5rem);
             }
 
             .inner-image {
-                width: 100%;
-                height: 100%;
+                .square(100%);
                 background-position: center center;
                 background-repeat: no-repeat;
                 object-fit: cover;

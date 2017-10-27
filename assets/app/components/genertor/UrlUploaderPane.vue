@@ -83,7 +83,7 @@ export default {
 }
 
 .error {
-    color: #f17878;
+    color: @palatte-failure;
 }
 
 </style>

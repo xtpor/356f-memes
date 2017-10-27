@@ -196,6 +196,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "../css/_utils.less";
 @import "../css/_flex_helper.less";
 @import "../css/_palatte.less";
 
@@ -214,9 +215,8 @@ export default {
         margin-top: 1rem;
 
         .icon {
-            width: 7rem;
-            height: 7rem;
-            border: 1px solid #e4e1e1;
+            .square(7rem);
+            border: 1px solid @palatte-border;
             border-radius: 0.5rem;
         }
 
@@ -236,9 +236,8 @@ export default {
 
     .meme-image {
         margin-top: 1rem;
-        border: 1px solid #e4e1e1;
-        height: 40rem;
-        width: 40rem;
+        border: 1px solid @palatte-border;
+        .square(40rem);
     }
 
     .url-box {
@@ -250,7 +249,7 @@ export default {
 
         .likes-display {
             margin-right: 1rem;
-            border: 1px solid #e4e1e1;
+            border: 1px solid @palatte-border;
             border-radius: 0.7rem;
             width: 8rem;
             height: 4rem;
@@ -281,11 +280,11 @@ export default {
             }
 
             .error-message {
-                color: rgb(209, 87, 87)
+                color: @palatte-failure;
             }
 
             .info-message {
-                color: rgb(71, 172, 72)
+                color: @palatte-success;
             }
         }
     }
@@ -301,8 +300,7 @@ export default {
                 margin-bottom: 0.7rem;
 
                 .icon {
-                    width: 4rem;
-                    height: 4rem;
+                    .square(4rem);
                 }
 
                 .username {

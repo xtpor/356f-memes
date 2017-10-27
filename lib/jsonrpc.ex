@@ -229,7 +229,8 @@ defmodule JsonRpc do
   end
 
   defp dispatch(method, params, module) do
-    fun = parse_fun(method )
+    Code.ensure_loaded(module)
+    fun = parse_fun(method)
     args = parse_args(params)
     ensure_existent_mfa(module, fun, args)
 
@@ -262,7 +263,6 @@ defmodule JsonRpc do
   end
 
   defp ensure_existent_mfa(m, f, a) do
-    Code.ensure_loaded(m)
     case :erlang.function_exported(m, f, length(a)) do
       true -> nil
       false -> throw {:error, :method_not_found}
