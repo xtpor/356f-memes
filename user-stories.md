@@ -3,7 +3,6 @@
 
 # Unfinished
 
-- As an user, I want to view the trending memes on the site
 - As an user, I want to able to search memes
 - As an member, I want to follow another user
 - As an user, I want to view the website in my language
@@ -14,6 +13,8 @@
 - As an admin, I want to publish news on the front page of the site
 
 # Finished
+
+- As an user, I want to view the trending memes on the site
 
 ## Memes Generator
 
