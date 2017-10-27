@@ -68,7 +68,7 @@ export default {
             types: ["newest",
                     "popular_today",
                     "popular_this_week",
-                    "popular_this_year"]
+                    "popular_this_month"]
         }
     },
     methods: {
