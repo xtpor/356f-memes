@@ -3,7 +3,6 @@
 
 # Unfinished
 
-- As an user, I want to able to search memes
 - As an member, I want to follow another user
 - As an user, I want to view the website in my language
 - As an user, I want some help when i am in trouble
@@ -15,6 +14,7 @@
 # Finished
 
 - As an user, I want to view the trending memes on the site
+- As an user, I want to able to search memes
 
 ## Memes Generator
 

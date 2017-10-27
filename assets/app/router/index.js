@@ -8,6 +8,7 @@ import User from '../components/User'
 import Profile from '../components/Profile'
 import Meme from '../components/Meme'
 import Trends from '../components/Trends'
+import Search from '../components/Search'
 import PageNotFound from '../components/PageNotFound'
 
 Vue.use(Router)
@@ -20,8 +21,7 @@ export default new Router({
         { path: '/login', name: 'SignIn', component: SignIn },
         { path: '/generator', name: 'Generator', component: Generator },
         { path: '/trends/:type', name: 'Trends', component: Trends },
-        { path: '/random', name: 'Random', },
-        { path: '/search', name: 'Search', },
+        { path: '/search', name: 'Search', component: Search },
         { path: '/privacy', name: 'Privacy', },
         { path: '/terms', name: 'Terms', },
         { path: '/contact', name: 'ContactUs', },

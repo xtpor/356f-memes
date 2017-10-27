@@ -80,7 +80,7 @@ defmodule Memes.Rpc.Image do
       end
       |> Memes.ValueStore.put
 
-    title = String.slice(title, 0..31)
+    title = if title == "", do: "Untitled", else: String.slice(title, 0..31)
     now = DateTime.utc_now
     id = gen_meme_id()
 
