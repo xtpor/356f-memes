@@ -78,6 +78,7 @@ defmodule Memes.Rpc.Image do
         {:ok, d} -> d
         :error -> error("Invalid DataURL")
       end
+      |> reject_invalid_image
       |> Memes.ValueStore.put
 
     title = if title == "", do: "Untitled", else: String.slice(title, 0..31)
@@ -88,6 +89,15 @@ defmodule Memes.Rpc.Image do
       [[id: id, username: uname, title: title, image: hash, created_at: now]])
 
     ok(id)
+  end
+
+  defp reject_invalid_image(image_data) do
+    case ExImageInfo.info(image_data) do
+      {"image/png", size, size, "PNG"} when size in 100..1000 ->
+        image_data
+      _ ->
+        error("Invalid image format")
+    end
   end
 
   def meme_info(id) when is_binary(id) do

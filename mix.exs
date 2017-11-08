@@ -31,6 +31,7 @@ defmodule Memes.Mixfile do
       {:comeonin, "~> 4.0"},
       {:pbkdf2_elixir, "~> 0.12.3"},
       {:joken, "~> 1.5"},
+      {:ex_image_info, "~> 0.2.2"},
     ]
   end
 end
