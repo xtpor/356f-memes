@@ -135,12 +135,12 @@ defmodule Memes.Rpc.Account do
         Repo.update_all(q, [])
 
         header =
-          ["Subject: Monkey's Dictionary reset password",
+          ["Subject: Password Reset on Monkey's Dictionary",
            "MIME-Version: 1.0",
            "Content-Type: text/html"]
 
         text = """
-        <p>Hello #{username},2</p>
+        <p>Hello #{username},</p>
         <p>We wanted let you know that your password was changed to '#{new_pass}'.</p>
         <p>Please do not reply to this email with your password. We will
         never ask for your password, and we strongly discourage you from
@@ -160,18 +160,24 @@ defmodule Memes.Rpc.Account do
     |> to_string
   end
 
-  def send_email(addr, header, text) do
-    sender = "comps356f.ouhk@gmail.com"
-    password = "monkeys dictionary"
-    payload = Enum.join(header, "\r\n") <> "\r\n" <> text
-    mail = {sender, [addr], payload}
+  @email_relay Application.get_env(:memes, :email_relay)
+  @email_username Application.get_env(:memes, :email_username)
+  @email_password Application.get_env(:memes, :email_password)
 
-    :gen_smtp_client.send_blocking mail,
-      relay: "smtp.gmail.com",
-      username: sender,
-      password: password,
-      tls: :always,
-      auth: :always
+  defp send_email(addr, header, text) do
+    require Logger
+    payload = Enum.join(header, "\r\n") <> "\r\n" <> text
+    mail = {@email_username, [addr], payload}
+
+    result =
+      :gen_smtp_client.send_blocking mail,
+        relay: @email_relay,
+        username: @email_username,
+        password: @email_password,
+        tls: :always,
+        auth: :always
+
+    Logger.debug("SMTP: #{inspect result}")
   end
 
   defp user_account(username) do
