@@ -174,6 +174,7 @@ defmodule Memes.Rpc.Account do
         relay: @email_relay,
         username: @email_username,
         password: @email_password,
+        port: 587,
         tls: :always,
         auth: :always
 
