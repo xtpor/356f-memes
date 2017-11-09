@@ -10,6 +10,8 @@ import Meme from '../components/Meme'
 import Trends from '../components/Trends'
 import Search from '../components/Search'
 import PageNotFound from '../components/PageNotFound'
+import PasswordReset from '../components/PasswordReset'
+import ResetSuccess from '../components/ResetSuccess'
 
 Vue.use(Router)
 
@@ -27,7 +29,8 @@ export default new Router({
         { path: '/contact', name: 'ContactUs', },
         { path: '/about', name: 'About', },
         { path: '/help', name: 'Help', },
-        { path: '/password-reset', name: 'PasswordReset', },
+        { path: '/password-reset', name: 'PasswordReset', component: PasswordReset },
+        { path: '/reset-success', name: 'ResetSuccess', component: ResetSuccess },
         { path: '/u/:id', name: 'User', component: User },
         { path: '/m/:id', name: 'Meme', component: Meme },
         { path: '/profile', name: 'Profile', component: Profile },

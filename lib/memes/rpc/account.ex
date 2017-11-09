@@ -108,6 +108,72 @@ defmodule Memes.Rpc.Account do
     ok(image_hash)
   end
 
+  def reset_password(username, email)
+      when is_binary(username) and is_binary(email) do
+    import Ecto.Query, only: [from: 2]
+    validate_username!(username)
+    validate_email!(email)
+
+    q =
+      from a in "accounts",
+      where: a.username == ^username and a.email == ^email,
+      select: count(a.username)
+
+    case Memes.Repo.all(q) do
+      [0] ->
+        error("Invalid username or email")
+      [1] ->
+
+        new_pass = gen_password()
+        hash = hashpwsalt(new_pass)
+
+        q =
+          from a in "accounts",
+          where: a.username == ^username,
+          update: [set: [password_hash: ^hash]]
+
+        Repo.update_all(q, [])
+
+        header =
+          ["Subject: Monkey's Dictionary reset password",
+           "MIME-Version: 1.0",
+           "Content-Type: text/html"]
+
+        text = """
+        <p>Hello #{username},2</p>
+        <p>We wanted let you know that your password was changed to '#{new_pass}'.</p>
+        <p>Please do not reply to this email with your password. We will
+        never ask for your password, and we strongly discourage you from
+         sharing it with anyone.</p>
+        <p>Regards,<br/>
+        Monkey's Dictionary Team</p>
+        """
+        send_email(email, header, text)
+        ok()
+    end
+  end
+
+  defp gen_password do
+    chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$_'
+    1..10
+    |> Enum.map(fn _ -> Enum.random(chars) end)
+    |> to_string
+  end
+
+  def send_email(addr, header, text) do
+    sender = "comps356f.ouhk@gmail.com"
+    password = "monkeys dictionary"
+    payload = Enum.join(header, "\r\n") <> "\r\n" <> text
+    mail = {sender, [addr], payload}
+
+    :gen_smtp_client.send_blocking mail,
+      relay: "smtp.gmail.com",
+      username: sender,
+      password: password,
+      tls: :always,
+      auth: :always
+  end
+
   defp user_account(username) do
     "accounts"
     |> where([username: ^username])

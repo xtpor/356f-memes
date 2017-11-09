@@ -32,6 +32,7 @@ defmodule Memes.Mixfile do
       {:pbkdf2_elixir, "~> 0.12.3"},
       {:joken, "~> 1.5"},
       {:ex_image_info, "~> 0.2.2"},
+      {:gen_smtp, "~> 0.12.0"},
     ]
   end
 end
