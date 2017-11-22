@@ -3,32 +3,27 @@
 
 # Unfinished
 
-- As an member, I want to follow another user
-- As an user, I want to view the website in my language
-- As an user, I want some help when i am in trouble
-- As an member, I want to recover my account in case of forgetting my password
-- As an member, I want to report inappropriate content / user
-- As an admin, I want to monitor the user activity
-- As an admin, I want to publish news on the front page of the site
+- As an user, I want ask for some help
+- As an user, I want to report inappropriate content
+- As the site admin, I want to answer the questions from the user
+- As the site admin, I want to handle report of inappropriate content
 
 # Finished
 
 - As an user, I want to view the trending memes on the site
-- As an user, I want to able to search memes
+- As an user, I want to able to search memes and users
 
 ## Memes Generator
 
-- As an user, I want to generate new memes
-- As an user, I want to add caption to a image to create a memes
-- As an user, I want to use an image from another website
-- As an user, I want to use an image from some kind of existing template
-- As an user, I want to use an image from my computer
+- As an user, I want to generate new memes using the generator
+- As an user, I want to search for templates
 
 ## Membership
 
-- As an user, I register a new account
+- As an user, I want to register a new account
 - As a member, I want to able to login
 - As a member, I want to edit my profile
+- As an member, I want to recover my account in case of forgetting my password
 
 ## Memes Album
 
