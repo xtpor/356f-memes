@@ -19,6 +19,10 @@ defmodule Memes.Endpoint do
     end
   end
 
+  post "/rpc/admin" do
+    JsonRpc.plug(conn, Memes.Rpc.Admin)
+  end
+
   post "/rpc/search" do
     JsonRpc.plug(conn, Memes.Rpc.Search)
   end
