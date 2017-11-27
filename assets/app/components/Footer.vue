@@ -17,9 +17,8 @@ export default {
             items: [
                 {text: 'Privacy', name: 'Privacy'},
                 {text: 'Terms of Use', name: 'Terms'},
-                {text: 'Contact Us', name: 'ContactUs'},
+                {text: 'Report Content', name: 'ReportContent'},
                 {text: 'Help', name: 'Help'},
-                {text: 'About', name: 'About'},
                 {text: 'Search', name: 'Search'},
             ]
         }

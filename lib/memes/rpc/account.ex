@@ -160,27 +160,6 @@ defmodule Memes.Rpc.Account do
     |> to_string
   end
 
-  @email_relay Application.get_env(:memes, :email_relay)
-  @email_username Application.get_env(:memes, :email_username)
-  @email_password Application.get_env(:memes, :email_password)
-
-  defp send_email(addr, header, text) do
-    require Logger
-    payload = Enum.join(header, "\r\n") <> "\r\n" <> text
-    mail = {@email_username, [addr], payload}
-
-    result =
-      :gen_smtp_client.send_blocking mail,
-        relay: @email_relay,
-        username: @email_username,
-        password: @email_password,
-        port: 587,
-        tls: :always,
-        auth: :always
-
-    Logger.debug("SMTP: #{inspect result}")
-  end
-
   defp user_account(username) do
     "accounts"
     |> where([username: ^username])

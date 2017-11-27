@@ -3,15 +3,14 @@
 
 # Unfinished
 
-- As an user, I want ask for some help
-- As an user, I want to report inappropriate content
-- As the site admin, I want to answer the questions from the user
-- As the site admin, I want to handle report of inappropriate content
-
 # Finished
 
+- As the site admin, I want to answer the questions from the user
+- As the site admin, I want to handle report of inappropriate content
 - As an user, I want to view the trending memes on the site
 - As an user, I want to able to search memes and users
+- As an user, I want ask for some help
+- As an user, I want to report inappropriate content
 
 ## Memes Generator
 
